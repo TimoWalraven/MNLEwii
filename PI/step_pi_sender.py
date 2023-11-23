@@ -51,6 +51,7 @@ def get_raw_measurement(device: evdev.InputDevice):
         elif event.code == ecodes.SYN_REPORT and event.value == 3:
             pass
         elif event.code == ecodes.SYN_REPORT and event.value == 0:
+            # TODO: optimise cpu usage when no event is received
             if None in data:
                 # This measurement failed to read one of the sensors, try again.
                 data = [None] * 4
