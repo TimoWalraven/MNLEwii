@@ -30,7 +30,6 @@ def get_raw_measurement(device: evdev.InputDevice):
         event = device.read_one()
         if event is None:
             continue
-
         # Measurements are in decigrams, so we convert them to kilograms here.
         if event.code == ecodes.ABS_HAT1X:
             # Top left.

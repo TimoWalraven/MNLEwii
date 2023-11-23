@@ -2,12 +2,14 @@ from PySide6.QtWidgets import QWidget, QVBoxLayout, QPushButton
 import pyqtgraph as pg
 
 
-class StabiloGram(QWidget):
+class Stabilogram(QWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
 
         self.layout = QVBoxLayout(self)
         self.graph = pg.PlotWidget(parent)
+        self.line = pg.PlotCurveItem(pen=pg.mkPen(color=(0, 0, 255), width=3))
+        self.graph.addItem(self.line)
         self.layout.addWidget(self.graph)
 
         self.graph.setAxisItems({'bottom': pg.AxisItem(orientation='bottom', showValues=True),
@@ -33,6 +35,9 @@ class ApMl(QWidget):
 
         self.layout = QVBoxLayout(self)
         self.graph = pg.PlotWidget()
+        self.layout.addWidget(self.graph)
+        self.line = pg.PlotCurveItem(pen=pg.mkPen(color=(0, 0, 255), width=3))
+        self.graph.addItem(self.line)
         self.layout.addWidget(self.graph)
 
         self.graph.setBackground(None)

@@ -21,7 +21,7 @@ from PySide6.QtWidgets import (QApplication, QComboBox, QFormLayout, QFrame,
     QSlider, QSpinBox, QTabWidget, QVBoxLayout,
     QWidget)
 
-from livewidgets import (apml, stabilogram)
+from widgets import (ApMl, Stabilogram)
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
@@ -43,6 +43,7 @@ class Ui_MainWindow(object):
         self.verticalLayout.setObjectName(u"verticalLayout")
         self.modes = QTabWidget(self.centralwidget)
         self.modes.setObjectName(u"modes")
+        self.modes.setStyleSheet(u"")
         self.livetab = QWidget()
         self.livetab.setObjectName(u"livetab")
         sizePolicy1 = QSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
@@ -69,23 +70,34 @@ class Ui_MainWindow(object):
 
         self.horizontalLayout.addWidget(self.statuslight)
 
-        self.statustext = QLabel(self.livetab)
-        self.statustext.setObjectName(u"statustext")
-        sizePolicy3 = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Preferred)
+        self.comport = QComboBox(self.livetab)
+        self.comport.setObjectName(u"comport")
+        sizePolicy3 = QSizePolicy(QSizePolicy.Minimum, QSizePolicy.Fixed)
         sizePolicy3.setHorizontalStretch(0)
         sizePolicy3.setVerticalStretch(0)
-        sizePolicy3.setHeightForWidth(self.statustext.sizePolicy().hasHeightForWidth())
-        self.statustext.setSizePolicy(sizePolicy3)
+        sizePolicy3.setHeightForWidth(self.comport.sizePolicy().hasHeightForWidth())
+        self.comport.setSizePolicy(sizePolicy3)
+        self.comport.setMinimumSize(QSize(150, 0))
+
+        self.horizontalLayout.addWidget(self.comport)
+
+        self.statustext = QLabel(self.livetab)
+        self.statustext.setObjectName(u"statustext")
+        sizePolicy4 = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Preferred)
+        sizePolicy4.setHorizontalStretch(0)
+        sizePolicy4.setVerticalStretch(0)
+        sizePolicy4.setHeightForWidth(self.statustext.sizePolicy().hasHeightForWidth())
+        self.statustext.setSizePolicy(sizePolicy4)
         self.statustext.setFrameShape(QFrame.Box)
 
         self.horizontalLayout.addWidget(self.statustext)
 
-        self.spinBox = QSpinBox(self.livetab)
-        self.spinBox.setObjectName(u"spinBox")
-        self.spinBox.setMaximum(120)
-        self.spinBox.setValue(30)
+        self.recordlength = QSpinBox(self.livetab)
+        self.recordlength.setObjectName(u"recordlength")
+        self.recordlength.setMaximum(120)
+        self.recordlength.setValue(30)
 
-        self.horizontalLayout.addWidget(self.spinBox)
+        self.horizontalLayout.addWidget(self.recordlength)
 
         self.startrecording = QPushButton(self.livetab)
         self.startrecording.setObjectName(u"startrecording")
@@ -102,13 +114,13 @@ class Ui_MainWindow(object):
 
         self.datadisplay = QHBoxLayout()
         self.datadisplay.setObjectName(u"datadisplay")
-        self.livestabilogramwidget = stabilogram(self.livetab)
+        self.livestabilogramwidget = Stabilogram(self.livetab)
         self.livestabilogramwidget.setObjectName(u"livestabilogramwidget")
-        sizePolicy4 = QSizePolicy(QSizePolicy.Minimum, QSizePolicy.Minimum)
-        sizePolicy4.setHorizontalStretch(0)
-        sizePolicy4.setVerticalStretch(0)
-        sizePolicy4.setHeightForWidth(self.livestabilogramwidget.sizePolicy().hasHeightForWidth())
-        self.livestabilogramwidget.setSizePolicy(sizePolicy4)
+        sizePolicy5 = QSizePolicy(QSizePolicy.Minimum, QSizePolicy.Minimum)
+        sizePolicy5.setHorizontalStretch(0)
+        sizePolicy5.setVerticalStretch(0)
+        sizePolicy5.setHeightForWidth(self.livestabilogramwidget.sizePolicy().hasHeightForWidth())
+        self.livestabilogramwidget.setSizePolicy(sizePolicy5)
         self.livestabilogramwidget.setMinimumSize(QSize(800, 800))
         self.livestabilogramwidget.setStyleSheet(u"")
 
@@ -179,8 +191,8 @@ class Ui_MainWindow(object):
 
         self.commentedit = QPlainTextEdit(self.frame)
         self.commentedit.setObjectName(u"commentedit")
-        sizePolicy4.setHeightForWidth(self.commentedit.sizePolicy().hasHeightForWidth())
-        self.commentedit.setSizePolicy(sizePolicy4)
+        sizePolicy5.setHeightForWidth(self.commentedit.sizePolicy().hasHeightForWidth())
+        self.commentedit.setSizePolicy(sizePolicy5)
         self.commentedit.setMinimumSize(QSize(100, 50))
 
         self.formLayout.setWidget(3, QFormLayout.FieldRole, self.commentedit)
@@ -191,19 +203,19 @@ class Ui_MainWindow(object):
 
         self.livedisplayright.addWidget(self.frame)
 
-        self.liveapwidget = apml(self.livetab)
+        self.liveapwidget = ApMl(self.livetab)
         self.liveapwidget.setObjectName(u"liveapwidget")
-        sizePolicy4.setHeightForWidth(self.liveapwidget.sizePolicy().hasHeightForWidth())
-        self.liveapwidget.setSizePolicy(sizePolicy4)
+        sizePolicy5.setHeightForWidth(self.liveapwidget.sizePolicy().hasHeightForWidth())
+        self.liveapwidget.setSizePolicy(sizePolicy5)
         self.liveapwidget.setMinimumSize(QSize(400, 200))
         self.liveapwidget.setStyleSheet(u"")
 
         self.livedisplayright.addWidget(self.liveapwidget)
 
-        self.livemlwidget = apml(self.livetab)
+        self.livemlwidget = ApMl(self.livetab)
         self.livemlwidget.setObjectName(u"livemlwidget")
-        sizePolicy4.setHeightForWidth(self.livemlwidget.sizePolicy().hasHeightForWidth())
-        self.livemlwidget.setSizePolicy(sizePolicy4)
+        sizePolicy5.setHeightForWidth(self.livemlwidget.sizePolicy().hasHeightForWidth())
+        self.livemlwidget.setSizePolicy(sizePolicy5)
         self.livemlwidget.setMinimumSize(QSize(400, 200))
         self.livemlwidget.setStyleSheet(u"")
 
@@ -344,7 +356,7 @@ class Ui_MainWindow(object):
         MainWindow.setWindowTitle(QCoreApplication.translate("MainWindow", u"STEP", None))
         self.statuslight.setText("")
         self.statustext.setText(QCoreApplication.translate("MainWindow", u"Status: ", None))
-        self.spinBox.setSuffix(QCoreApplication.translate("MainWindow", u" s", None))
+        self.recordlength.setSuffix(QCoreApplication.translate("MainWindow", u" s", None))
         self.startrecording.setText(QCoreApplication.translate("MainWindow", u"Record", None))
         self.saverecording.setText(QCoreApplication.translate("MainWindow", u"Save", None))
         self.stancelabel.setText(QCoreApplication.translate("MainWindow", u"Stance", None))

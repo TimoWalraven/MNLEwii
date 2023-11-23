@@ -11,10 +11,12 @@ from serial.tools import list_ports
 import datetime
 from time import sleep
 
+import numpy as np
+
 
 class STEPviewer:
 
-    def __init__(self):
+    def __init__(self, dummy=False):
         # connection parameters
         self.com_list = []
         self.com_port_selected = None
@@ -25,6 +27,10 @@ class STEPviewer:
         self.recordstate = False
         self.x = []
         self.y = []
+
+        if dummy:
+            self.x = np.linspace(0, 10, 100)
+            self.y = np.sin(self.x)
 
         self.app = QApplication.instance()  # checks if QApplication already exists
         if not self.app:  # create QApplication if it doesn't exist
@@ -168,6 +174,8 @@ class STEPviewer:
             self.record_button.setStyleSheet("background-color: red")
         elif not self.recordstate and self.record_button.styleSheet() != "background-color: none":
             self.record_button.setStyleSheet("background-color: none")
+
+
 
         """# Disconnect the slider to prevent a feedback loop
         self.slider.valueChanged.disconnect(self.slider_changed)

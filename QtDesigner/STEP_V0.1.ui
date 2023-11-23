@@ -38,6 +38,9 @@
    <layout class="QVBoxLayout" name="verticalLayout">
     <item>
      <widget class="QTabWidget" name="modes">
+      <property name="styleSheet">
+       <string notr="true"/>
+      </property>
       <property name="currentIndex">
        <number>0</number>
       </property>
@@ -85,6 +88,22 @@ border-radius: 10px; </string>
            </widget>
           </item>
           <item>
+           <widget class="QComboBox" name="comport">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>150</width>
+              <height>0</height>
+             </size>
+            </property>
+           </widget>
+          </item>
+          <item>
            <widget class="QLabel" name="statustext">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
@@ -101,7 +120,7 @@ border-radius: 10px; </string>
            </widget>
           </item>
           <item>
-           <widget class="QSpinBox" name="spinBox">
+           <widget class="QSpinBox" name="recordlength">
             <property name="suffix">
              <string> s</string>
             </property>
@@ -132,7 +151,7 @@ border-radius: 10px; </string>
         <item>
          <layout class="QHBoxLayout" name="datadisplay" stretch="3,2">
           <item>
-           <widget class="stabilogram" name="livestabilogramwidget" native="true">
+           <widget class="Stabilogram" name="livestabilogramwidget" native="true">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
               <horstretch>0</horstretch>
@@ -312,7 +331,7 @@ border-radius: 10px; </string>
              </widget>
             </item>
             <item>
-             <widget class="apml" name="liveapwidget" native="true">
+             <widget class="ApMl" name="liveapwidget" native="true">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
                 <horstretch>0</horstretch>
@@ -331,7 +350,7 @@ border-radius: 10px; </string>
              </widget>
             </item>
             <item>
-             <widget class="apml" name="livemlwidget" native="true">
+             <widget class="ApMl" name="livemlwidget" native="true">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
                 <horstretch>0</horstretch>
@@ -510,15 +529,15 @@ border-color: rgb(0, 0, 0);</string>
  </widget>
  <customwidgets>
   <customwidget>
-   <class>stabilogram</class>
+   <class>Stabilogram</class>
    <extends>QWidget</extends>
-   <header>livewidgets</header>
+   <header>widgets</header>
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>apml</class>
+   <class>ApMl</class>
    <extends>QWidget</extends>
-   <header>livewidgets</header>
+   <header>widgets</header>
    <container>1</container>
   </customwidget>
  </customwidgets>
