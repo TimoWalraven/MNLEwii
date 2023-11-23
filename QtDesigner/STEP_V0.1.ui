@@ -1,0 +1,527 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1261</width>
+    <height>913</height>
+   </rect>
+  </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
+  </property>
+  <property name="windowTitle">
+   <string>STEP</string>
+  </property>
+  <property name="iconSize">
+   <size>
+    <width>50</width>
+    <height>50</height>
+   </size>
+  </property>
+  <property name="toolButtonStyle">
+   <enum>Qt::ToolButtonIconOnly</enum>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <property name="layoutDirection">
+    <enum>Qt::LeftToRight</enum>
+   </property>
+   <property name="autoFillBackground">
+    <bool>false</bool>
+   </property>
+   <layout class="QVBoxLayout" name="verticalLayout">
+    <item>
+     <widget class="QTabWidget" name="modes">
+      <property name="currentIndex">
+       <number>0</number>
+      </property>
+      <widget class="QWidget" name="livetab">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <attribute name="title">
+        <string>Live</string>
+       </attribute>
+       <layout class="QVBoxLayout" name="verticalLayout_5" stretch="0,1">
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout">
+          <item>
+           <widget class="QPushButton" name="statuslight">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>20</width>
+              <height>20</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>20</width>
+              <height>20</height>
+             </size>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">border-color: rgb(0, 0, 0);
+background-color: rgb(255, 0, 0);
+border-radius: 10px; </string>
+            </property>
+            <property name="text">
+             <string/>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="statustext">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="frameShape">
+             <enum>QFrame::Box</enum>
+            </property>
+            <property name="text">
+             <string>Status: </string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QSpinBox" name="spinBox">
+            <property name="suffix">
+             <string> s</string>
+            </property>
+            <property name="maximum">
+             <number>120</number>
+            </property>
+            <property name="value">
+             <number>30</number>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="startrecording">
+            <property name="text">
+             <string>Record</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="saverecording">
+            <property name="text">
+             <string>Save</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <layout class="QHBoxLayout" name="datadisplay" stretch="3,2">
+          <item>
+           <widget class="stabilogram" name="livestabilogramwidget" native="true">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>800</width>
+              <height>800</height>
+             </size>
+            </property>
+            <property name="styleSheet">
+             <string notr="true"/>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <layout class="QVBoxLayout" name="livedisplayright" stretch="0,0,0">
+            <item>
+             <widget class="QFrame" name="frame">
+              <property name="minimumSize">
+               <size>
+                <width>400</width>
+                <height>300</height>
+               </size>
+              </property>
+              <property name="styleSheet">
+               <string notr="true">border-color: rgb(0, 0, 0);</string>
+              </property>
+              <property name="frameShape">
+               <enum>QFrame::Box</enum>
+              </property>
+              <property name="frameShadow">
+               <enum>QFrame::Plain</enum>
+              </property>
+              <layout class="QHBoxLayout" name="horizontalLayout_2">
+               <item>
+                <layout class="QFormLayout" name="formLayout">
+                 <property name="fieldGrowthPolicy">
+                  <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
+                 </property>
+                 <property name="rowWrapPolicy">
+                  <enum>QFormLayout::DontWrapRows</enum>
+                 </property>
+                 <property name="labelAlignment">
+                  <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                 </property>
+                 <property name="formAlignment">
+                  <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+                 </property>
+                 <property name="horizontalSpacing">
+                  <number>10</number>
+                 </property>
+                 <property name="verticalSpacing">
+                  <number>10</number>
+                 </property>
+                 <property name="leftMargin">
+                  <number>10</number>
+                 </property>
+                 <property name="topMargin">
+                  <number>10</number>
+                 </property>
+                 <property name="rightMargin">
+                  <number>10</number>
+                 </property>
+                 <property name="bottomMargin">
+                  <number>10</number>
+                 </property>
+                 <item row="0" column="0">
+                  <widget class="QLabel" name="stancelabel">
+                   <property name="text">
+                    <string>Stance</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="2" column="0">
+                  <widget class="QLabel" name="agelabel">
+                   <property name="text">
+                    <string>Age</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="3" column="0">
+                  <widget class="QLabel" name="commentlabel">
+                   <property name="text">
+                    <string>Comments</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="0" column="1">
+                  <widget class="QComboBox" name="stanceselect">
+                   <property name="editable">
+                    <bool>true</bool>
+                   </property>
+                   <property name="currentText">
+                    <string>double legged</string>
+                   </property>
+                   <property name="currentIndex">
+                    <number>0</number>
+                   </property>
+                   <item>
+                    <property name="text">
+                     <string>double legged</string>
+                    </property>
+                   </item>
+                   <item>
+                    <property name="text">
+                     <string>left leg</string>
+                    </property>
+                   </item>
+                   <item>
+                    <property name="text">
+                     <string>right leg</string>
+                    </property>
+                   </item>
+                   <item>
+                    <property name="text">
+                     <string>tandem</string>
+                    </property>
+                   </item>
+                  </widget>
+                 </item>
+                 <item row="2" column="1">
+                  <widget class="QSpinBox" name="ageselect">
+                   <property name="maximum">
+                    <number>130</number>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="1" column="1">
+                  <widget class="QComboBox" name="eyeselect">
+                   <property name="editable">
+                    <bool>true</bool>
+                   </property>
+                   <property name="currentText">
+                    <string>open</string>
+                   </property>
+                   <item>
+                    <property name="text">
+                     <string>open</string>
+                    </property>
+                   </item>
+                   <item>
+                    <property name="text">
+                     <string>closed</string>
+                    </property>
+                   </item>
+                  </widget>
+                 </item>
+                 <item row="1" column="0">
+                  <widget class="QLabel" name="eyelabel">
+                   <property name="text">
+                    <string>Eyes</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="3" column="1">
+                  <widget class="QPlainTextEdit" name="commentedit">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
+                   <property name="minimumSize">
+                    <size>
+                     <width>100</width>
+                     <height>50</height>
+                    </size>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
+              </layout>
+             </widget>
+            </item>
+            <item>
+             <widget class="apml" name="liveapwidget" native="true">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="minimumSize">
+               <size>
+                <width>400</width>
+                <height>200</height>
+               </size>
+              </property>
+              <property name="styleSheet">
+               <string notr="true"/>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="apml" name="livemlwidget" native="true">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="minimumSize">
+               <size>
+                <width>400</width>
+                <height>200</height>
+               </size>
+              </property>
+              <property name="styleSheet">
+               <string notr="true"/>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="analysistab">
+       <attribute name="title">
+        <string>Analysis</string>
+       </attribute>
+       <layout class="QVBoxLayout" name="verticalLayout_2" stretch="0,1">
+        <item>
+         <layout class="QHBoxLayout" name="analysistoolbar">
+          <item>
+           <widget class="QPushButton" name="analysisopenfile">
+            <property name="text">
+             <string>Open</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="analysisplay">
+            <property name="text">
+             <string>Play</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="currenttime">
+            <property name="text">
+             <string>time</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QSlider" name="timeslider">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="maxtime">
+            <property name="text">
+             <string>maxtime</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="analysisrestart">
+            <property name="text">
+             <string>Restart</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="analysismakereport">
+            <property name="text">
+             <string>Save report</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="viewselection">
+            <property name="text">
+             <string>Views</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <widget class="QScrollArea" name="analysisscrollarea">
+          <property name="widgetResizable">
+           <bool>true</bool>
+          </property>
+          <widget class="QWidget" name="analysiswidgetarea">
+           <property name="geometry">
+            <rect>
+             <x>0</x>
+             <y>0</y>
+             <width>1188</width>
+             <height>1238</height>
+            </rect>
+           </property>
+           <layout class="QVBoxLayout" name="verticalLayout_3">
+            <item>
+             <layout class="QGridLayout" name="analysiswidgetgrid">
+              <item row="1" column="0">
+               <widget class="QWidget" name="widget_2" native="true">
+                <property name="minimumSize">
+                 <size>
+                  <width>0</width>
+                  <height>400</height>
+                 </size>
+                </property>
+                <property name="styleSheet">
+                 <string notr="true">border-color: rgb(0, 0, 0);
+border-thickness: 1px;
+</string>
+                </property>
+               </widget>
+              </item>
+              <item row="0" column="0">
+               <widget class="QWidget" name="widget" native="true">
+                <property name="minimumSize">
+                 <size>
+                  <width>0</width>
+                  <height>400</height>
+                 </size>
+                </property>
+                <property name="styleSheet">
+                 <string notr="true">background-color: rgb(207, 207, 207);
+border-color: rgb(0, 0, 0);</string>
+                </property>
+               </widget>
+              </item>
+              <item row="1" column="1">
+               <widget class="QWidget" name="widget_4" native="true">
+                <property name="styleSheet">
+                 <string notr="true">background-color: rgb(191, 191, 191);
+border-color: rgb(0, 0, 0);</string>
+                </property>
+               </widget>
+              </item>
+              <item row="0" column="1">
+               <widget class="QWidget" name="widget_3" native="true">
+                <property name="styleSheet">
+                 <string notr="true">border-color: rgb(0, 0, 0);</string>
+                </property>
+               </widget>
+              </item>
+              <item row="2" column="0">
+               <widget class="QWidget" name="widget_5" native="true">
+                <property name="minimumSize">
+                 <size>
+                  <width>0</width>
+                  <height>400</height>
+                 </size>
+                </property>
+                <property name="styleSheet">
+                 <string notr="true">background-color: rgb(204, 204, 204);
+border-color: rgb(0, 0, 0);</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+           </layout>
+          </widget>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>stabilogram</class>
+   <extends>QWidget</extends>
+   <header>livewidgets</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>apml</class>
+   <extends>QWidget</extends>
+   <header>livewidgets</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections/>
+</ui>
