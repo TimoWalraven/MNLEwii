@@ -6,10 +6,10 @@ import serial
 from serial.tools import list_ports
 import datetime
 from time import sleep
-
-import frontend
-import pandas as pd
 import numpy as np
+# Custom imports
+import frontend
+from code_descriptors_postural_control.stabilogram.stato import Stabilogram
 
 
 class STEPviewer:
@@ -24,20 +24,19 @@ class STEPviewer:
         self.ui.setupUi(self.win)
 
         # global variables
-        self.mode = 'live'
+        self.ui.modes.currentChanged.connect(self.switchmode)
+        self.mode = self.ui.modes.currentIndex()
+
         self.livex = []
         self.livey = []
-        self.analysdata = pd.DataFrame(columns=['time', 'x', 'y'])
-
-        if dummy:
-            self.dummyrec = pd.read_csv('dummyrec.csv', sep=' ', header=0)
-            self.livex = self.dummyrec['x'].tolist()
-            self.livey = self.dummyrec['y'].tolist()
+        self.analysisdata = np.array([])
+        self.idx = 0
 
         self.display = False
 
         # Live mode variables
         self.status = 'Disconnected'
+        self.ui.statustext.setText(f"Status: {self.status}")
 
         self.com_list = []
         self.com_port_selected = None
@@ -45,15 +44,52 @@ class STEPviewer:
         self.recording = []
         self.recordstate = False
 
+        if dummy:
+            self.dummyrec = np.genfromtxt('dummyrec.csv', delimiter=' ')[1:]
+            self.livex = [i[1] for i in self.dummyrec]
+            self.livey = [i[2] for i in self.dummyrec]
+            self.recording = self.dummyrec
+
         # Analysis mode variables
+        self.analysisidx = 0  # index of current measurement
+        self.playstate = False  # state of the play button
 
         # Live mode setup
-        # Toolbar
-        self.ui.startrecording.clicked.connect(self.recorder)  # record button
-        self.ui.saverecording.clicked.connect(self.saverecording)  # save button
+        # Toolbar: from left to right
+        self.ui.startrecording.clicked.connect(self.recorder)
+
+        self.ui.analyserecording.clicked.connect(self.analyserecording)
+        if not dummy:
+            self.ui.analyserecording.setDisabled(True)
+
         # Plots
         self.ui.liveapwidget.setmode('AP')
         self.ui.livemlwidget.setmode('ML')
+
+        # Analysis mode setup
+        # Toolbar: from left to right
+        # Open file button
+        self.ui.analysisopenfile.clicked.connect(self.openrecording)
+        # Play/pause button
+        self.ui.analysisplay.clicked.connect(self.playpause)
+        self.ui.analysisplay.setDisabled(True)
+        # Slider current value
+        self.ui.currenttime.setText(f'--')
+        # Slider
+        self.ui.timeslider.valueChanged.connect(self.slider_changed)
+        self.ui.timeslider.sliderPressed.connect(self.slider_pressed)
+        self.ui.timeslider.sliderReleased.connect(self.slider_released)
+        self.ui.timeslider.setDisabled(True)
+        self.ui.timeslider.setTracking(True)
+        # Slider max value
+        self.ui.maxtime.setText(f'--')
+        # Restart button
+        self.ui.analysisrestart.clicked.connect(self.restart)
+        self.ui.analysisrestart.setDisabled(True)
+        # Save button
+        self.ui.saverecording.clicked.connect(self.saverecording)  # save button
+        self.ui.saverecording.setDisabled(True)
+        # Widgets
 
         # Initialize timer for updating the plot and elapsed time
         self.start_time = datetime.datetime.now()
@@ -108,7 +144,7 @@ class STEPviewer:
                                 self.livex.append(float(line.split(', ')[0]))
                                 self.livey.append(float(line.split(', ')[1]))
                                 line = ''
-                                if len(self.x) > 30:
+                                if len(self.livex) > 3000:
                                     self.livex.pop(0)
                                     self.livey.pop(0)
                             else:
@@ -122,14 +158,8 @@ class STEPviewer:
                 sleep(1)
 
     def update(self):
-        # Get current mode
-        if self.ui.modes.currentIndex() == 0:
-            self.mode = 'live'
-        elif self.ui.modes.currentIndex() == 1:
-            self.mode = 'analysis'
-
         # Live mode
-        if self.mode == 'live':
+        if self.mode == 0:
             self.ui.livestabilogramwidget.line.setData(self.livex, self.livey)
             self.ui.liveapwidget.line.setData(np.linspace(0, 30, len(self.livey)), self.livey)
             self.ui.livemlwidget.line.setData(np.linspace(0, 30, len(self.livex)), self.livex)
@@ -144,13 +174,27 @@ class STEPviewer:
             if self.ui.comport.currentText() != self.status:
                 self.ui.comport.setCurrentText(self.status)
 
-
-
-
         # Analysis mode
-        elif self.mode == 'analysis':
-            none = None
+        elif self.mode == 1:
+            if len(self.analysisdata) > 1:
+                self.ui.currenttime.setText(f'{self.analysisdata[self.analysisidx][0]:.2f} s')
+                # TODO: change the way the plot is updated
+                x = [i[1] for i in self.analysisdata if i[0] <= timeelapsed.total_seconds()]
+                y = [i[2] for i in self.analysisdata if i[0] <= timeelapsed.total_seconds()]
+                self.ui.widget.line.setData(x, y)
+                # update plot
+                if self.playstate:
+                    self.ui.timeslider.valueChanged.disconnect(self.slider_changed)
+                    self.ui.timeslider.setValue(self.analysisidx)
+                    self.ui.timeslider.valueChanged.connect(self.slider_changed)
 
+                if self.playstate and self.analysisidx < len(self.analysisdata) - 1:
+                    timeelapsed = datetime.datetime.now() - self.start_time
+                    self.analysisidx = len(x)-1
+
+                elif self.playstate and self.analysisidx >= len(self.analysisdata) - 1:
+                    self.playstate = False
+                    self.ui.analysisplay.setDisabled(True)
         QApplication.processEvents()
 
     def saverecording(self):
@@ -166,6 +210,29 @@ class STEPviewer:
             f.write('"time" "x" "y"\n')
             for line in self.recording:
                 f.write(f"{line[0]} {line[1]} {line[2]}\n")
+
+    def openrecording(self):
+        # open file with Qt
+        options = QFileDialog.Options()
+        options |= QFileDialog.ReadOnly
+        fileName, _ = QFileDialog.getOpenFileName(self.win, 'Open CSV File', '', 'CSV Files (*.csv);;All Files (*)',
+                                                  options=options)
+        try:
+            self.analysisdata = np.genfromtxt(fileName, delimiter=' ')[1:]
+            self.analysisidx = 0
+            self.update()
+            self.ui.analysisplay.setDisabled(False)
+            self.ui.saverecording.setDisabled(False)
+            self.ui.analysisrestart.setDisabled(False)
+            self.ui.timeslider.setDisabled(False)
+            self.ui.currenttime.setText(f'{self.analysisdata[self.analysisidx][0]:.2f} s')
+            self.ui.timeslider.setMaximum(len(self.analysisdata))
+            self.ui.maxtime.setText(f'{self.analysisdata[-1][0]:.2f} s')
+
+            print("file read successfully")
+
+        except Exception as e:
+            print(f"Error opening file, maybe wrong format? error: {e}")
 
     def recorder(self):
         def record(seconds):
@@ -187,7 +254,6 @@ class STEPviewer:
             data = []
             for i in range(len(xs)):
                 data.append([times[i], xs[i], ys[i]])
-            # TODO: execute SWARII resampling on recording
             self.recording = data
 
         if self.recordstate:
@@ -203,19 +269,78 @@ class STEPviewer:
         else:
             print("Unknown error occurred.")
 
-    def play(self):
-        self.timer.start(self.interval)
+    def playpause(self):
+        if not self.playstate:
+            self.start_time = datetime.datetime.now() - datetime.timedelta(seconds=self.analysisdata[self.analysisidx][0])
+        self.playstate = not self.playstate
 
-    def pause(self):
-        self.timer.stop()
+    def restart(self):
+        self.analysisidx = 0
+        self.playstate = False
+        self.playpause()
+        self.ui.analysisplay.setDisabled(False)
+        self.update()
 
     def slider_changed(self):
-        self.idx = self.slider.value()
-        self.line.setData(self.x[:self.idx], self.y[:self.idx])
+        self.start_time = datetime.datetime.now() - datetime.timedelta(seconds=self.analysisdata[self.ui.timeslider.value()-1][0])
+        self.ui.widget.line.setData(self.analysisdata[:self.analysisidx, 1],
+                                    self.analysisdata[:self.analysisidx, 2])
+        self.update()
 
-        # Update the elapsed time based on the slider value
-        elapsed_time = self.time[self.idx] - self.start_time
-        self.time_label.setText(f"Elapsed Time: {elapsed_time:.2f} s")
+    def slider_pressed(self):
+        self.timer.stop()
+
+    def slider_released(self):
+        self.analysisidx = self.ui.timeslider.value()
+        self.timer.start(self.interval)
+        self.update()
+
+    def switchmode(self):
+        if self.mode == 0:  # if mode is live (0), switch to analysis (1)
+            self.analysisidx = 0
+            self.mode = 1
+
+        elif self.mode == 1:  # if mode is analysis (1), switch to live (0)
+            self.mode = 0
+        else:
+            print("Unknown mode.")
+        self.update()
+
+    def analyserecording(self):
+        target_frequency = 100
+        time = self.recording[:, 0]
+        x = self.recording[:, 1]
+        y = self.recording[:, 2]
+        # normalize time, x and y
+        time = time - time[0]
+        x = x - np.mean(x)
+        y = y - np.mean(y)
+        data = np.array([time, x, y]).T
+
+        valid_index = (np.sum(np.isnan(data), axis=1) == 0)
+        if np.sum(valid_index) != len(data):
+            raise ValueError("Clean NaN values first")
+
+        stato = Stabilogram()
+        stato.from_array(array=data, resample_frequency=target_frequency)
+        # add time to stato
+        stato.time = np.linspace(0, len(stato.signal) / target_frequency, len(stato.signal))
+
+        newdata = np.column_stack((stato.time, stato.signal))
+        # round to 2 decimals
+        newdata = np.round(newdata, 2)
+        self.analysisdata = newdata
+
+        # enable buttons and change mode
+        self.ui.analysisplay.setDisabled(False)
+        self.ui.saverecording.setDisabled(False)
+        self.ui.analysisrestart.setDisabled(False)
+        self.ui.timeslider.setDisabled(False)
+        self.ui.currenttime.setText(f'{self.analysisdata[self.analysisidx][0]:.2f} s')
+        self.ui.timeslider.setMaximum(len(self.analysisdata))
+        self.ui.maxtime.setText(f'{self.analysisdata[-1][0]:.2f} s')
+        self.ui.modes.setCurrentIndex(1)
+        pass
 
 
 if __name__ == '__main__':

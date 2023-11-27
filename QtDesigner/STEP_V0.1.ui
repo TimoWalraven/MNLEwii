@@ -42,7 +42,7 @@
        <string notr="true"/>
       </property>
       <property name="currentIndex">
-       <number>0</number>
+       <number>1</number>
       </property>
       <widget class="QWidget" name="livetab">
        <property name="sizePolicy">
@@ -124,6 +124,9 @@ border-radius: 10px; </string>
             <property name="suffix">
              <string> s</string>
             </property>
+            <property name="minimum">
+             <number>1</number>
+            </property>
             <property name="maximum">
              <number>120</number>
             </property>
@@ -140,9 +143,15 @@ border-radius: 10px; </string>
            </widget>
           </item>
           <item>
-           <widget class="QPushButton" name="saverecording">
+           <widget class="QPushButton" name="analyserecording">
+            <property name="minimumSize">
+             <size>
+              <width>150</width>
+              <height>0</height>
+             </size>
+            </property>
             <property name="text">
-             <string>Save</string>
+             <string>Analyse recording -&gt;</string>
             </property>
            </widget>
           </item>
@@ -221,28 +230,14 @@ border-radius: 10px; </string>
                  <property name="bottomMargin">
                   <number>10</number>
                  </property>
-                 <item row="0" column="0">
+                 <item row="1" column="0">
                   <widget class="QLabel" name="stancelabel">
                    <property name="text">
                     <string>Stance</string>
                    </property>
                   </widget>
                  </item>
-                 <item row="2" column="0">
-                  <widget class="QLabel" name="agelabel">
-                   <property name="text">
-                    <string>Age</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="3" column="0">
-                  <widget class="QLabel" name="commentlabel">
-                   <property name="text">
-                    <string>Comments</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="0" column="1">
+                 <item row="1" column="1">
                   <widget class="QComboBox" name="stanceselect">
                    <property name="editable">
                     <bool>true</bool>
@@ -275,14 +270,14 @@ border-radius: 10px; </string>
                    </item>
                   </widget>
                  </item>
-                 <item row="2" column="1">
-                  <widget class="QSpinBox" name="ageselect">
-                   <property name="maximum">
-                    <number>130</number>
+                 <item row="2" column="0">
+                  <widget class="QLabel" name="eyelabel">
+                   <property name="text">
+                    <string>Eyes</string>
                    </property>
                   </widget>
                  </item>
-                 <item row="1" column="1">
+                 <item row="2" column="1">
                   <widget class="QComboBox" name="eyeselect">
                    <property name="editable">
                     <bool>true</bool>
@@ -302,14 +297,79 @@ border-radius: 10px; </string>
                    </item>
                   </widget>
                  </item>
-                 <item row="1" column="0">
-                  <widget class="QLabel" name="eyelabel">
-                   <property name="text">
-                    <string>Eyes</string>
+                 <item row="3" column="0">
+                  <widget class="Line" name="line">
+                   <property name="orientation">
+                    <enum>Qt::Horizontal</enum>
                    </property>
                   </widget>
                  </item>
                  <item row="3" column="1">
+                  <widget class="QLabel" name="patientinfolabel">
+                   <property name="styleSheet">
+                    <string notr="true">font: 75 10pt &quot;MS Shell Dlg 2&quot;;</string>
+                   </property>
+                   <property name="text">
+                    <string>Patient info</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="4" column="0">
+                  <widget class="QLabel" name="agelabel">
+                   <property name="text">
+                    <string>Age</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="4" column="1">
+                  <widget class="QSpinBox" name="ageselect">
+                   <property name="maximum">
+                    <number>130</number>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="5" column="0">
+                  <widget class="QLabel" name="heightlabel">
+                   <property name="text">
+                    <string>Height</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="5" column="1">
+                  <widget class="QSpinBox" name="heightselect">
+                   <property name="suffix">
+                    <string> (cm)</string>
+                   </property>
+                   <property name="maximum">
+                    <number>260</number>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="6" column="0">
+                  <widget class="QLabel" name="weightlabel">
+                   <property name="text">
+                    <string>Weight</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="6" column="1">
+                  <widget class="QSpinBox" name="weightselect">
+                   <property name="suffix">
+                    <string> (Kg)</string>
+                   </property>
+                   <property name="maximum">
+                    <number>1000</number>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="8" column="0">
+                  <widget class="QLabel" name="commentlabel">
+                   <property name="text">
+                    <string>Comments</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="8" column="1">
                   <widget class="QPlainTextEdit" name="commentedit">
                    <property name="sizePolicy">
                     <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
@@ -322,6 +382,42 @@ border-radius: 10px; </string>
                      <width>100</width>
                      <height>50</height>
                     </size>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="7" column="0">
+                  <widget class="QLabel" name="conditionlabel">
+                   <property name="text">
+                    <string>Condition</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="7" column="1">
+                  <widget class="QComboBox" name="conditionselect">
+                   <item>
+                    <property name="text">
+                     <string>Healthy</string>
+                    </property>
+                   </item>
+                   <item>
+                    <property name="text">
+                     <string>Parkinsons</string>
+                    </property>
+                   </item>
+                   <item>
+                    <property name="text">
+                     <string>Stroke</string>
+                    </property>
+                   </item>
+                  </widget>
+                 </item>
+                 <item row="0" column="1">
+                  <widget class="QLabel" name="testinfolabel">
+                   <property name="styleSheet">
+                    <string notr="true">font: 75 10pt &quot;MS Shell Dlg 2&quot;;</string>
+                   </property>
+                   <property name="text">
+                    <string>Test info</string>
                    </property>
                   </widget>
                  </item>
@@ -391,14 +487,23 @@ border-radius: 10px; </string>
           <item>
            <widget class="QPushButton" name="analysisplay">
             <property name="text">
-             <string>Play</string>
+             <string>⏯️</string>
             </property>
            </widget>
           </item>
           <item>
            <widget class="QLabel" name="currenttime">
+            <property name="minimumSize">
+             <size>
+              <width>30</width>
+              <height>0</height>
+             </size>
+            </property>
             <property name="text">
-             <string>time</string>
+             <string>--</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignCenter</set>
             </property>
            </widget>
           </item>
@@ -411,8 +516,17 @@ border-radius: 10px; </string>
           </item>
           <item>
            <widget class="QLabel" name="maxtime">
+            <property name="minimumSize">
+             <size>
+              <width>30</width>
+              <height>0</height>
+             </size>
+            </property>
             <property name="text">
-             <string>maxtime</string>
+             <string>--</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignCenter</set>
             </property>
            </widget>
           </item>
@@ -424,7 +538,7 @@ border-radius: 10px; </string>
            </widget>
           </item>
           <item>
-           <widget class="QPushButton" name="analysismakereport">
+           <widget class="QPushButton" name="saverecording">
             <property name="text">
              <string>Save report</string>
             </property>
@@ -472,7 +586,7 @@ border-thickness: 1px;
                </widget>
               </item>
               <item row="0" column="0">
-               <widget class="QWidget" name="widget" native="true">
+               <widget class="Stabilogram" name="widget" native="true">
                 <property name="minimumSize">
                  <size>
                   <width>0</width>

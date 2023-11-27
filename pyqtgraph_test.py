@@ -175,8 +175,6 @@ class STEPviewer:
         elif not self.recordstate and self.record_button.styleSheet() != "background-color: none":
             self.record_button.setStyleSheet("background-color: none")
 
-
-
         """# Disconnect the slider to prevent a feedback loop
         self.slider.valueChanged.disconnect(self.slider_changed)
 
