@@ -10,6 +10,7 @@ import numpy as np
 # Custom imports
 import frontend
 from code_descriptors_postural_control.stabilogram.stato import Stabilogram
+from code_descriptors_postural_control.descriptors import compute_all_features
 
 
 class STEPviewer:
@@ -36,7 +37,7 @@ class STEPviewer:
 
         # Live mode variables
         self.status = 'Disconnected'
-        self.ui.statustext.setText(f"Status: {self.status}")
+        self.ui.statustext.setText(f"initializing...")
 
         self.com_list = []
         self.com_port_selected = None
@@ -90,6 +91,8 @@ class STEPviewer:
         self.ui.saverecording.clicked.connect(self.saverecording)  # save button
         self.ui.saverecording.setDisabled(True)
         # Widgets
+        self.ui.analysisapwidget.setmode('AP')
+        self.ui.analysismlwidget.setmode('ML')
 
         # Initialize timer for updating the plot and elapsed time
         self.start_time = datetime.datetime.now()
@@ -126,36 +129,39 @@ class STEPviewer:
             self.ui.comport.addItems(self.com_list)
 
     def read_from_serial(self):
-        while self.mode == 'live':
-            self.display = False
-            if self.com_port_selected != self.ui.comport.currentText() and self.ui.comport.currentText() in self.com_list:
-                self.com_port_selected = self.ui.comport.currentText()
-                print(f'com port selected: {self.com_port_selected}')
-            if self.com_port_selected is not None and self.com_port_selected != 'No com ports found':
-                try:
-                    with serial.Serial(self.com_port_selected, 115200, timeout=1) as ser:
-                        print(f"Serial port {ser.name} successfully opened.")
-                        self.display = True
-                        line = ''
-                        while self.com_port_selected == self.ui.comport.currentText():
-                            incoming = ser.readline().decode()
-                            if incoming and incoming != '':
-                                line += incoming[1:-2]
-                                self.livex.append(float(line.split(', ')[0]))
-                                self.livey.append(float(line.split(', ')[1]))
-                                line = ''
-                                if len(self.livex) > 3000:
-                                    self.livex.pop(0)
-                                    self.livey.pop(0)
-                            else:
-                                continue
+        while True:
+            if self.mode == 0:
+                self.display = False
+                if self.com_port_selected != self.ui.comport.currentText() and self.ui.comport.currentText() in self.com_list:
+                    self.com_port_selected = self.ui.comport.currentText()
+                    print(f'com port selected: {self.com_port_selected}')
+                if self.com_port_selected is not None and self.com_port_selected != 'No com ports found':
+                    try:
+                        with serial.Serial(self.com_port_selected, 115200, timeout=1) as ser:
+                            print(f"Serial port {ser.name} successfully opened.")
+                            self.ui.statustext.setText(f"connected")
+                            self.display = True
+                            line = ''
+                            while self.com_port_selected == self.ui.comport.currentText():
+                                incoming = ser.readline().decode()
+                                if incoming and incoming != '':
+                                    line += incoming[1:-2]
+                                    self.livex.append(float(line.split(', ')[0]))
+                                    self.livey.append(float(line.split(', ')[1]))
+                                    line = ''
+                                    if len(self.livex) > 100:
+                                        self.livex.pop(0)
+                                        self.livey.pop(0)
+                                else:
+                                    continue
 
-                except serial.SerialException as e:
-                    print(f"An error occurred: {e} \n Trying to reconnect...")
-                    self.display = False
+                    except serial.SerialException as e:
+                        print(f"An error occurred: {e} \n Trying to reconnect...")
+                        self.status = 'disconnected'
+                        self.display = False
+                        sleep(1)
+                else:
                     sleep(1)
-            else:
-                sleep(1)
 
     def update(self):
         # Live mode
@@ -178,10 +184,12 @@ class STEPviewer:
         elif self.mode == 1:
             if len(self.analysisdata) > 1:
                 self.ui.currenttime.setText(f'{self.analysisdata[self.analysisidx][0]:.2f} s')
-                # TODO: change the way the plot is updated
-                x = [i[1] for i in self.analysisdata if i[0] <= timeelapsed.total_seconds()]
-                y = [i[2] for i in self.analysisdata if i[0] <= timeelapsed.total_seconds()]
+                time = self.analysisdata[:self.analysisidx, 0]
+                x = self.analysisdata[:self.analysisidx, 1]
+                y = self.analysisdata[:self.analysisidx, 2]
                 self.ui.widget.line.setData(x, y)
+                self.ui.analysisapwidget.line.setData(time, y)
+                self.ui.analysismlwidget.line.setData(time, x)
                 # update plot
                 if self.playstate:
                     self.ui.timeslider.valueChanged.disconnect(self.slider_changed)
@@ -189,8 +197,7 @@ class STEPviewer:
                     self.ui.timeslider.valueChanged.connect(self.slider_changed)
 
                 if self.playstate and self.analysisidx < len(self.analysisdata) - 1:
-                    timeelapsed = datetime.datetime.now() - self.start_time
-                    self.analysisidx = len(x)-1
+                    self.analysisidx += 1
 
                 elif self.playstate and self.analysisidx >= len(self.analysisdata) - 1:
                     self.playstate = False
@@ -212,6 +219,7 @@ class STEPviewer:
                 f.write(f"{line[0]} {line[1]} {line[2]}\n")
 
     def openrecording(self):
+        # ToDo: add option to resample when loading file
         # open file with Qt
         options = QFileDialog.Options()
         options |= QFileDialog.ReadOnly
@@ -229,6 +237,10 @@ class STEPviewer:
             self.ui.timeslider.setMaximum(len(self.analysisdata))
             self.ui.maxtime.setText(f'{self.analysisdata[-1][0]:.2f} s')
 
+            # set range of plot by time
+            self.ui.analysisapwidget.graph.setRange(xRange=[0, self.analysisdata[-1][0]], yRange=[-115, 115], update=True)
+            self.ui.analysismlwidget.graph.setRange(xRange=[0, self.analysisdata[-1][0]], yRange=[-220, 220], update=True)
+
             print("file read successfully")
 
         except Exception as e:
@@ -243,26 +255,26 @@ class STEPviewer:
 
             # record for 10 seconds
             print(f"Recording for {seconds} seconds...")
+            self.ui.startrecording.setDisabled(True)
             while (datetime.datetime.now() - start_time).total_seconds() <= seconds:
                 self.recordstate = True
                 times.append((datetime.datetime.now() - start_time).total_seconds())
-                xs.append(self.x[-1])
-                ys.append(self.y[-1])
+                xs.append(self.livex[-1])
+                ys.append(self.livey[-1])
                 sleep(0.01)
             self.recordstate = False
-            print("Done.")
-            data = []
-            for i in range(len(xs)):
-                data.append([times[i], xs[i], ys[i]])
-            self.recording = data
+            print("Done recording")
+            self.recording = np.column_stack((times, xs, ys))
+            self.ui.startrecording.setDisabled(False)
+            self.ui.analyserecording.setDisabled(False)
 
         if self.recordstate:
             print("Already recording.")
             return
-        elif self.status == 'Disconnected':
+        elif self.ui.statustext.text() == 'disconnected':
             print("No balance board connected.")
             return
-        elif self.status == 'Connected':
+        elif self.ui.statustext.text() == 'connected':
             recordthread = Thread(target=record, args=(self.ui.recordlength.value(),))
             recordthread.daemon = True
             recordthread.start()
@@ -339,9 +351,24 @@ class STEPviewer:
         self.ui.currenttime.setText(f'{self.analysisdata[self.analysisidx][0]:.2f} s')
         self.ui.timeslider.setMaximum(len(self.analysisdata))
         self.ui.maxtime.setText(f'{self.analysisdata[-1][0]:.2f} s')
+        self.ui.analysisapwidget.graph.setRange(xRange=[0, self.analysisdata[-1][0]], yRange=[-115, 115], update=True)
+        self.ui.analysismlwidget.graph.setRange(xRange=[0, self.analysisdata[-1][0]], yRange=[-220, 220], update=True)
         self.ui.modes.setCurrentIndex(1)
+
+        # Table view
+        features = compute_all_features(stato)
+        self.ui.tableWidget.setRowCount(len(features))
+        self.ui.tableWidget.setColumnCount(2)
+        self.ui.tableWidget.setHorizontalHeaderLabels(['Feature', 'Value'])
+        for i, (key, value) in enumerate(features.items()):
+            self.ui.tableWidget.setItem(i, 0, frontend.QTableWidgetItem(key))
+            self.ui.tableWidget.setItem(i, 1, frontend.QTableWidgetItem(str(value)))
+        # set width of columns
+        self.ui.tableWidget.setColumnWidth(0, 300)
+        self.ui.tableWidget.setColumnWidth(1, 300)
+
         pass
 
 
 if __name__ == '__main__':
-    plot = STEPviewer(dummy=True)
+    plot = STEPviewer(dummy=False)

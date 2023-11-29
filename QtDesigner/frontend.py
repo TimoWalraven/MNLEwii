@@ -16,10 +16,10 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QImage, QKeySequence, QLinearGradient, QPainter,
     QPalette, QPixmap, QRadialGradient, QTransform)
 from PySide6.QtWidgets import (QApplication, QComboBox, QFormLayout, QFrame,
-    QGridLayout, QHBoxLayout, QLabel, QMainWindow,
-    QPlainTextEdit, QPushButton, QScrollArea, QSizePolicy,
-    QSlider, QSpinBox, QTabWidget, QVBoxLayout,
-    QWidget)
+    QGridLayout, QHBoxLayout, QHeaderView, QLabel,
+    QMainWindow, QPlainTextEdit, QPushButton, QScrollArea,
+    QSizePolicy, QSlider, QSpinBox, QTabWidget,
+    QTableWidget, QTableWidgetItem, QVBoxLayout, QWidget)
 
 from widgets import (ApMl, Stabilogram)
 
@@ -27,7 +27,7 @@ class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         if not MainWindow.objectName():
             MainWindow.setObjectName(u"MainWindow")
-        MainWindow.resize(1261, 913)
+        MainWindow.resize(1600, 1000)
         sizePolicy = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -80,6 +80,11 @@ class Ui_MainWindow(object):
         self.comport.setMinimumSize(QSize(150, 0))
 
         self.horizontalLayout.addWidget(self.comport)
+
+        self.label = QLabel(self.livetab)
+        self.label.setObjectName(u"label")
+
+        self.horizontalLayout.addWidget(self.label)
 
         self.statustext = QLabel(self.livetab)
         self.statustext.setObjectName(u"statustext")
@@ -346,28 +351,11 @@ class Ui_MainWindow(object):
         self.analysisscrollarea.setWidgetResizable(True)
         self.analysiswidgetarea = QWidget()
         self.analysiswidgetarea.setObjectName(u"analysiswidgetarea")
-        self.analysiswidgetarea.setGeometry(QRect(0, 0, 1188, 1238))
+        self.analysiswidgetarea.setGeometry(QRect(0, 0, 1548, 888))
         self.verticalLayout_3 = QVBoxLayout(self.analysiswidgetarea)
         self.verticalLayout_3.setObjectName(u"verticalLayout_3")
         self.analysiswidgetgrid = QGridLayout()
         self.analysiswidgetgrid.setObjectName(u"analysiswidgetgrid")
-        self.widget_2 = QWidget(self.analysiswidgetarea)
-        self.widget_2.setObjectName(u"widget_2")
-        self.widget_2.setMinimumSize(QSize(0, 400))
-        self.widget_2.setStyleSheet(u"border-color: rgb(0, 0, 0);\n"
-"border-thickness: 1px;\n"
-"")
-
-        self.analysiswidgetgrid.addWidget(self.widget_2, 1, 0, 1, 1)
-
-        self.widget = Stabilogram(self.analysiswidgetarea)
-        self.widget.setObjectName(u"widget")
-        self.widget.setMinimumSize(QSize(0, 400))
-        self.widget.setStyleSheet(u"background-color: rgb(207, 207, 207);\n"
-"border-color: rgb(0, 0, 0);")
-
-        self.analysiswidgetgrid.addWidget(self.widget, 0, 0, 1, 1)
-
         self.widget_4 = QWidget(self.analysiswidgetarea)
         self.widget_4.setObjectName(u"widget_4")
         self.widget_4.setStyleSheet(u"background-color: rgb(191, 191, 191);\n"
@@ -375,19 +363,49 @@ class Ui_MainWindow(object):
 
         self.analysiswidgetgrid.addWidget(self.widget_4, 1, 1, 1, 1)
 
-        self.widget_3 = QWidget(self.analysiswidgetarea)
-        self.widget_3.setObjectName(u"widget_3")
-        self.widget_3.setStyleSheet(u"border-color: rgb(0, 0, 0);")
+        self.widget_2 = QWidget(self.analysiswidgetarea)
+        self.widget_2.setObjectName(u"widget_2")
+        self.widget_2.setMinimumSize(QSize(0, 400))
+        self.widget_2.setStyleSheet(u"border-color: rgb(0, 0, 0);\n"
+"border-thickness: 1px;\n"
+"")
+        self.horizontalLayout_3 = QHBoxLayout(self.widget_2)
+        self.horizontalLayout_3.setObjectName(u"horizontalLayout_3")
+        self.tableWidget = QTableWidget(self.widget_2)
+        self.tableWidget.setObjectName(u"tableWidget")
 
-        self.analysiswidgetgrid.addWidget(self.widget_3, 0, 1, 1, 1)
+        self.horizontalLayout_3.addWidget(self.tableWidget)
 
-        self.widget_5 = QWidget(self.analysiswidgetarea)
-        self.widget_5.setObjectName(u"widget_5")
-        self.widget_5.setMinimumSize(QSize(0, 400))
-        self.widget_5.setStyleSheet(u"background-color: rgb(204, 204, 204);\n"
+
+        self.analysiswidgetgrid.addWidget(self.widget_2, 1, 0, 1, 1)
+
+        self.widget = Stabilogram(self.analysiswidgetarea)
+        self.widget.setObjectName(u"widget")
+        self.widget.setMinimumSize(QSize(400, 400))
+        self.widget.setStyleSheet(u"background-color: rgb(207, 207, 207);\n"
 "border-color: rgb(0, 0, 0);")
 
-        self.analysiswidgetgrid.addWidget(self.widget_5, 2, 0, 1, 1)
+        self.analysiswidgetgrid.addWidget(self.widget, 0, 0, 1, 1)
+
+        self.verticalWidget = QWidget(self.analysiswidgetarea)
+        self.verticalWidget.setObjectName(u"verticalWidget")
+        self.verticalWidget.setMinimumSize(QSize(400, 200))
+        self.verticalLayout_4 = QVBoxLayout(self.verticalWidget)
+        self.verticalLayout_4.setObjectName(u"verticalLayout_4")
+        self.analysisapwidget = ApMl(self.verticalWidget)
+        self.analysisapwidget.setObjectName(u"analysisapwidget")
+        self.analysisapwidget.setMinimumSize(QSize(400, 200))
+
+        self.verticalLayout_4.addWidget(self.analysisapwidget)
+
+        self.analysismlwidget = ApMl(self.verticalWidget)
+        self.analysismlwidget.setObjectName(u"analysismlwidget")
+        self.analysismlwidget.setMinimumSize(QSize(400, 200))
+
+        self.verticalLayout_4.addWidget(self.analysismlwidget)
+
+
+        self.analysiswidgetgrid.addWidget(self.verticalWidget, 0, 1, 1, 1)
 
 
         self.verticalLayout_3.addLayout(self.analysiswidgetgrid)
@@ -415,7 +433,8 @@ class Ui_MainWindow(object):
     def retranslateUi(self, MainWindow):
         MainWindow.setWindowTitle(QCoreApplication.translate("MainWindow", u"STEP", None))
         self.statuslight.setText("")
-        self.statustext.setText(QCoreApplication.translate("MainWindow", u"Status: ", None))
+        self.label.setText(QCoreApplication.translate("MainWindow", u"Status:", None))
+        self.statustext.setText(QCoreApplication.translate("MainWindow", u"--", None))
         self.recordlength.setSuffix(QCoreApplication.translate("MainWindow", u" s", None))
         self.startrecording.setText(QCoreApplication.translate("MainWindow", u"Record", None))
         self.analyserecording.setText(QCoreApplication.translate("MainWindow", u"Analyse recording ->", None))

@@ -1,5 +1,8 @@
+import numpy as np
+from PySide6 import QtCore
 from PySide6.QtWidgets import QWidget, QVBoxLayout, QPushButton
 import pyqtgraph as pg
+from pyqtgraph import Point, ViewBox
 
 
 class Stabilogram(QWidget):
@@ -23,12 +26,13 @@ class Stabilogram(QWidget):
         self.graph.setLabel('right', 'AP', units='mm')
         self.graph.setLabel('bottom', 'ML', units='mm')
         self.graph.setAspectLocked(True, 1)
-        self.graph.setMouseEnabled(x=False, y=False)
+        # self.graph.setMouseEnabled(x=False, y=False)
         self.graph.hideButtons()
 
 
 class ApMl(QWidget):
     """Widget for displaying APML data."""
+
     def __init__(self, parent=None):
         """Initialize the widget."""
         super().__init__(parent)
@@ -44,10 +48,9 @@ class ApMl(QWidget):
         self.graph.showGrid(y=True)
         self.graph.setLabel('left', 'Sway', units='mm')
         self.graph.setLabel('bottom', 'Time', units='s')
-        self.graph.setMouseEnabled(x=False, y=False)
-        self.graph.hideButtons()
-
         self.setmode('AP')
+        self.graph.setMouseEnabled(x=False, y=True)
+        self.graph.hideButtons()
 
     def setmode(self, mode):
         if mode == 'AP':
@@ -60,13 +63,5 @@ class ApMl(QWidget):
 
 if __name__ == "__main__":
     from PySide6.QtWidgets import QApplication
-
     app = QApplication([])
-
-    # Create an instance of your custom widget
-    custom_widget = ApMl('ML')
-
-    # Show the widget
-    custom_widget.show()
-
     app.exec()
