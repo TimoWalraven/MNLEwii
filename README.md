@@ -1,2 +1,3 @@
-# MNLEwii
-MNLE wii board 
+# STEP
+Welcome to STEP, an accessible and open-source tool to do center of pressure measurements using the Nintendo Wii Balance Board.
+Will be updated during the coming weeks...
