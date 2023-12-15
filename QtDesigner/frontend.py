@@ -351,7 +351,7 @@ class Ui_MainWindow(object):
         self.analysisscrollarea.setWidgetResizable(True)
         self.analysiswidgetarea = QWidget()
         self.analysiswidgetarea.setObjectName(u"analysiswidgetarea")
-        self.analysiswidgetarea.setGeometry(QRect(0, 0, 1548, 888))
+        self.analysiswidgetarea.setGeometry(QRect(0, 0, 1568, 930))
         self.verticalLayout_3 = QVBoxLayout(self.analysiswidgetarea)
         self.verticalLayout_3.setObjectName(u"verticalLayout_3")
         self.analysiswidgetgrid = QGridLayout()
@@ -423,7 +423,7 @@ class Ui_MainWindow(object):
 
         self.retranslateUi(MainWindow)
 
-        self.modes.setCurrentIndex(1)
+        self.modes.setCurrentIndex(0)
         self.stanceselect.setCurrentIndex(0)
 
 

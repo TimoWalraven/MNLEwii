@@ -3,7 +3,7 @@ import time
 from typing import Optional
 import evdev
 from evdev import ecodes
-from serial import Serial, SerialException
+import serial
 
 def get_board_device() -> Optional[evdev.InputDevice]:
     """ Return the Wii Balance Board device. """
@@ -56,10 +56,7 @@ def get_raw_measurement(device: evdev.InputDevice):
                 data = [None] * 4
                 continue
             else:
-                # calculate x and y cop coordinates in mm
-                x_cop = width/2 * (data[1] + data[2] - data[0] - data[3]) / sum(data)
-                y_cop = length/2 * (data[0] + data[1] - data[2] - data[3]) / sum(data)
-                return [x_cop, y_cop]
+                return data
         else:
             print(f"ERROR: Got unexpected event: {evdev.categorize(event)}")
 
@@ -75,15 +72,14 @@ if __name__ == "__main__":
     while True:
         try:
             print("Opening serial port...")
-            with Serial('/dev/ttyGS0', 9600, timeout=1) as ser:
+            with serial.Serial('/dev/ttyGS0', 9600, timeout=1) as ser:
                 print(f"Serial port {ser.name} opened.")
                 while True:
                     data = get_raw_measurement(boardfound)
-                    data = [round(i, 4) for i in data]
                     ser.reset_output_buffer()
                     ser.write(f"{str(data)}\n".encode())
                     time.sleep(0.01)
 
-        except SerialException as e:
+        except serial.SerialException as e:
             print(f"An error occurred: {e}, trying to reconnect...")
             time.sleep(1)

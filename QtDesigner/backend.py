@@ -36,7 +36,7 @@ class STEPviewer:
         self.display = False
 
         # Live mode variables
-        self.status = 'Disconnected'
+        self.status = 'disconnected'
         self.ui.statustext.setText(f"initializing...")
 
         self.com_list = []
@@ -129,41 +129,42 @@ class STEPviewer:
             self.ui.comport.addItems(self.com_list)
 
     def read_from_serial(self):
-        while True:
-            if self.mode == 0:
-                self.display = False
-                if self.com_port_selected != self.ui.comport.currentText() and self.ui.comport.currentText() in self.com_list:
-                    self.com_port_selected = self.ui.comport.currentText()
-                    print(f'com port selected: {self.com_port_selected}')
-                if self.com_port_selected is not None and self.com_port_selected != 'No com ports found':
-                    try:
-                        with serial.Serial(self.com_port_selected, 115200, timeout=1) as ser:
-                            print(f"Serial port {ser.name} successfully opened.")
-                            self.ui.statustext.setText(f"connected")
-                            self.display = True
-                            line = ''
-                            while self.com_port_selected == self.ui.comport.currentText():
-                                incoming = ser.readline().decode()
-                                if incoming and incoming != '':
-                                    line += incoming[1:-2]
-                                    self.livex.append(float(line.split(', ')[0]))
-                                    self.livey.append(float(line.split(', ')[1]))
-                                    line = ''
-                                    if len(self.livex) > 100:
-                                        self.livex.pop(0)
-                                        self.livey.pop(0)
-                                else:
-                                    continue
+        while self.mode == 0:
+            self.display = False
+            if self.com_port_selected != self.ui.comport.currentText() and self.ui.comport.currentText() in self.com_list:
+                self.com_port_selected = self.ui.comport.currentText()
+                print(f'com port selected: {self.com_port_selected}')
+            if self.com_port_selected is not None and self.com_port_selected != 'No com ports found':
+                try:
+                    print(f"Opening serial port {self.com_port_selected}...")
+                    with serial.Serial(self.com_port_selected, 9600, timeout=1) as ser:
+                        print(f"Serial port {ser.name} successfully opened.")
+                        self.ui.statustext.setText(f"connected")
+                        self.display = True
+                        line = ''
+                        while self.com_port_selected == self.ui.comport.currentText():
+                            incoming = ser.readline().decode()
+                            if incoming and incoming != '':
+                                line += incoming[1:-2]
+                                self.livex.append(float(line.split(', ')[0]))
+                                self.livey.append(float(line.split(', ')[1]))
+                                line = ''
+                                if len(self.livex) > 100:
+                                    self.livex.pop(0)
+                                    self.livey.pop(0)
+                            else:
+                                continue
 
-                    except serial.SerialException as e:
-                        print(f"An error occurred: {e} \n Trying to reconnect...")
-                        self.status = 'disconnected'
-                        self.display = False
-                        sleep(1)
-                else:
+                except serial.SerialException as e:
+                    print(f"An error occurred: {e} \n Trying to reconnect...")
+                    self.status = 'disconnected'
+                    self.display = False
                     sleep(1)
+            else:
+                sleep(1)
 
     def update(self):
+        # TODO: if initialized in mode 1, doesnt connect
         # Live mode
         if self.mode == 0:
             self.ui.livestabilogramwidget.line.setData(self.livex, self.livey)
