@@ -54,6 +54,7 @@ def get_raw_measurement(device: evdev.InputDevice):
             if None in data:
                 # This measurement failed to read one of the sensors, try again.
                 data = [None] * 4
+                time.sleep(0.01)
                 continue
             else:
                 # calculate x and y cop coordinates in mm
@@ -72,7 +73,7 @@ if __name__ == "__main__":
         if boardfound:
             print("Board found!")
             break
-        time.sleep(0.5)
+        time.sleep(1)
     print("Opening serial port...")
     with Serial('/dev/ttyGS0', 9600, timeout=1) as ser:
         print(f"Serial port {ser.name} opened.")
