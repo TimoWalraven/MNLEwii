@@ -3,7 +3,7 @@ import time
 from typing import Optional
 import evdev
 from evdev import ecodes
-from serial import Serial, SerialException
+from serial import Serial
 
 def get_board_device() -> Optional[evdev.InputDevice]:
     """ Return the Wii Balance Board device. """
@@ -65,25 +65,29 @@ def get_raw_measurement(device: evdev.InputDevice):
 
 
 if __name__ == "__main__":
+    print("Waiting for board...")
     boardfound = None
     while not boardfound:
         boardfound = get_board_device()
         if boardfound:
-            print("\aBalance board found, please step on.")
+            print("Board found!")
             break
         time.sleep(0.5)
-    while True:
-        try:
-            print("Opening serial port...")
-            with Serial('/dev/ttyGS0', 9600, timeout=1) as ser:
-                print(f"Serial port {ser.name} opened.")
-                while True:
-                    data = get_raw_measurement(boardfound)
-                    data = [round(i, 4) for i in data]
-                    ser.reset_output_buffer()
-                    ser.write(f"{str(data)}\n".encode())
-                    time.sleep(0.01)
+    print("Opening serial port...")
+    with Serial('/dev/ttyGS0', 9600, timeout=1) as ser:
+        print(f"Serial port {ser.name} opened.")
+        while True:
+            try:
+                data = get_raw_measurement(boardfound)
+            except Exception as e:
+                print("Exception, closing serial port...")
+                break
 
-        except SerialException as e:
-            print(f"An error occurred: {e}, trying to reconnect...")
-            time.sleep(1)
+            data = [round(i, 4) for i in data]
+            ser.reset_output_buffer()
+            ser.write(f"{str(data)}\n".encode())
+            time.sleep(0.01)
+
+    print(f"Serial port {ser.name} closed.")
+    print("Exiting...")
+
