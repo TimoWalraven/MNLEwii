@@ -55,6 +55,7 @@ def get_raw_measurement(device: evdev.InputDevice):
             if None in data:
                 if tries == 0:
                     time.sleep(0.5)
+                    print(data)
                     print("no person detected, trying again...")
                 else:
                     tries -= 1
