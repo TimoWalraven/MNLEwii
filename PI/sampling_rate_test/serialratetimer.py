@@ -1,12 +1,12 @@
 """"For measuring the rate of serial communication between the PI zero series"""
 
-import serial
+from serial import Serial
 import numpy as np
 import time
 
 ### Variables ###
 port = 'COM6'
-test_length = 20  # seconds
+test_length = 5  # seconds
 
 save = True
 filename = 'sampling_test_Zero_W_1'
@@ -18,8 +18,9 @@ times = []
 
 if __name__ == "__main__":
     print("Opening serial port...")
-    with serial.Serial(port, 9600, timeout=1) as ser:
+    with Serial(port, 9600, timeout=1) as ser:
         print(f"Serial port {ser.name} opened.")
+        # list p
 
         # countdown 5 seconds
         for i in range(5, 0, -1):
@@ -43,6 +44,7 @@ if __name__ == "__main__":
     # convert data to numpy array
     recording = np.array(times)
     intervals = np.diff(recording)
+    print(f"Number of intervals: {len(intervals)}")
     # print average interval
     print(f"Average interval: {np.mean(intervals)}")
     # plot histogram of intervals

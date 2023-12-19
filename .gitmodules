@@ -1,0 +1,6 @@
+[submodule "submodules/code_descriptors_postural_control"]
+	path = submodules/code_descriptors_postural_control
+	url = https://github.com/Jythen/code_descriptors_postural_control
+[submodule "code_descriptors_postural_control"]
+	path = code_descriptors_postural_control
+	url = https://github.com/Jythen/code_descriptors_postural_control

@@ -1,3 +1,7 @@
+
+
+
+
 import numpy as np
 from numpy.core.defchararray import upper
 from scipy.signal import butter, filtfilt, periodogram, savgol_filter, welch
@@ -8,25 +12,27 @@ from scipy.fft import rfft, rfftfreq
 
 from code_descriptors_postural_control.constants import labels
 
-
 class Stabilogram():
     def __init__(self):
 
-        self.raw_signal = None  # contains the raw signal
-        self.signal = None  # contain the processed signal
-        self.frequency = None  # frequency of the signal. Only if uniformly sampled
 
-        self._sampling_ok = None  # is the signal uniformly sampled ?
+        self.raw_signal = None              # contains the raw signal
+        self.signal = None                  # contain the processed signal
+        self.frequency = None               # frequency of the signal. Only if uniformly sampled  
+
+        self._sampling_ok = None            # is the signal uniformly sampled ?
+        
 
         # Store the values of signal transformation, to avoid multiple computations
-        self._radius = None
+        self._radius = None                 
         self._power_spectrum = None
         self._sway_density = None
         self._diffusion_plot = None
         self._speed = None
 
-    def from_array(self, array, center=True, original_frequency=None, time=None, resample=True, resample_frequency=25,
-                   filter_=True, filter_lower_bound=0, filter_upper_bound=10, filter_order=4):
+
+
+    def from_array(self, array, center = True, original_frequency = None, time = None, resample = True, resample_frequency = 25, filter_ = True, filter_lower_bound=0, filter_upper_bound=10, filter_order = 4 ):
         """
         Import an array as a stabilogram.
 
@@ -40,61 +46,74 @@ class Stabilogram():
         filter_ : resample the signal to the values defined in the paper. See the function filter_ for more details
 
         """
-
+        
         signal = np.array(array)
 
         self.raw_signal = signal
 
         n_columns = signal.shape[1]
 
-        assert n_columns in [2, 3], "invalid number of columns in the array, should be 2 or 3"
+        assert n_columns in [2,3], "invalid number of columns in the array, should be 2 or 3"
 
-        if n_columns == 2:
+
+            
+
+            
+
+        if n_columns == 2 :
             assert original_frequency is not None or time is not None, "Need to provide a frequency for the signal (parameter original frequency), or timestamps"
-
+            
             if original_frequency is not None:
-                time = np.arange(len(signal)) / original_frequency
-                time = time[:, None]
+            
+                time = np.arange(len(signal))/original_frequency
+                time = time[:,None]
 
-            valid_index = (np.sum(np.isnan(signal), axis=1) == 0)
+            valid_index = (np.sum(np.isnan(signal),axis=1) == 0)
             time = time[valid_index]
             signal = signal[valid_index]
 
             mean = np.mean(signal, axis=0, keepdims=True)
             self.mean_value = mean[0]
-
-            if center:
+                        
+            if center : 
                 signal = signal - mean
+                
 
-            signal = np.concatenate([time, signal], axis=1)
+            signal = np.concatenate([time, signal], axis = 1)
 
-        else:
+        else : 
             # time start from 0
-            min = np.min(signal[:, 0])
-            signal[:, 0] = signal[:, 0] - min
-
-            self.mean_value = np.mean(signal[:, 1:], axis=0, keepdims=True)[0]
-
-            # center signal
-            if center:
-                csignal = signal[:, 1:]
+            time = signal[:,0]
+            time = time - time[0]
+            time = time[:,None]
+            signal[:,0] = time
+    
+            mean = np.mean(signal[:,1:], axis=0, keepdims=True)
+            self.mean_value = mean
+            
+            #center signal 
+            if center : 
+                csignal = signal[:,1:]
                 csignal = csignal - np.mean(csignal, axis=0, keepdims=True)
-                signal[:, 1:] = csignal
+                signal[:,1:] = csignal
+                
 
         self.signal = signal
         assert not np.isnan(signal).any(), "error, NaN values"
-        if resample:
+        if resample :
             self.resample(target_frequency=resample_frequency)
-        else:
+        else :
             assert original_frequency is not None, "Need to provide a frequency for the signal (parameter original frequency) when resample is set to False"
             self._sampling_ok = True
             self.frequency = original_frequency
-            self.signal = self.signal[:, 1:]
+            self.signal = self.signal[:,1:]
 
-        if filter_:
-            self.filter_(lower_bound=filter_lower_bound, upper_bound=filter_upper_bound, order=filter_order)
+        if filter_ :
+            self.filter_(lower_bound=filter_lower_bound, upper_bound=filter_upper_bound, order= filter_order)
+   
 
-    def resample(self, target_frequency=25) -> None:
+
+    def resample(self, target_frequency=25)-> None:
 
         """
         Resample the stabilogram using SWARII, using the parameters recommended in the paper
@@ -106,88 +125,115 @@ class Stabilogram():
         signal = np.array(self.signal)
         n_columns = signal.shape[1]
 
-        assert n_columns in [2, 3], "invalid number of columns in the array, should be 2 or 3"
+        assert n_columns in [2,3], "invalid number of columns in the array, should be 2 or 3"
 
-        if n_columns == 3:
-            signal = SWARII.resample(data=signal, desired_frequency=target_frequency)
+        if n_columns == 3 :
+            signal = SWARII.resample(data = signal, desired_frequency=target_frequency)
 
         self.signal = signal
         self._sampling_ok = True
         self.frequency = target_frequency
 
-    def filter_(self, lower_bound=0, upper_bound=10, order=4) -> None:
+
+    def filter_(self, lower_bound=0, upper_bound=10, order = 4) -> None:
         """ 
         Filter the stabilogram using a Butterworth filter. Default parameters are the one used in the paper. 
         """
 
+
         assert self.raw_signal is not None, "Please provide a signal first"
-        assert self._sampling_ok, "Please resample the signal first, using the function resample "
-        assert self.signal is not None, "Error, please resample the signal again"
+        assert self._sampling_ok, "Please resample the signal first, using the function resample " 
+        assert self.signal is not None,  "Error, please resample the signal again"
+
+
+        
 
         signal = np.array(self.signal)
         nyq = 0.5 * self.frequency
         low = lower_bound / nyq
         high = upper_bound / nyq
 
-        if low == 0:
+        if low == 0 :
             b, a = butter(order, high, btype='lowpass')
-        elif high == np.inf:
+        elif high == np.inf :
             b, a = butter(order, low, btype='highpass')
-        else:
-            b, a = butter(order, (low, high), btype='bandpass')
+        else :
+            b, a = butter(order, (low,high), btype='bandpass')
 
-        y = filtfilt(b, a, signal, axis=0)
+        y = filtfilt(b, a, signal,axis=0)    
         self.signal = y
 
-    #   ===================================================================
-    #    Methods to compute the transformations of the signals.
-    #    Should not be called directly, and instead accessed through properties
-    #   ===================================================================
 
-    def _compute_radius(self) -> None:
+        
+    
+
+
+
+
+
+
+
+#   ===================================================================
+#    Methods to compute the transformations of the signals.
+#    Should not be called directly, and instead accessed through properties
+#   ===================================================================
+
+
+
+
+
+    def _compute_radius(self)-> None:  
         """
         Compute the radius of the stabilogram (signal is supposed centered). 
-        """
-        self._radius = np.linalg.norm(self.signal, axis=1, keepdims=True)
+        """ 
+        self._radius = np.linalg.norm(self.signal, axis=1, keepdims=True) 
+        
 
-    def _compute_power_spectrum(self) -> None:
+
+    def _compute_power_spectrum(self)-> None:  
         """
         Compute the PSD of the stabilogram using the Welch method. 
-        """
+        """ 
 
-        freqs, psd = welch(self.signal, fs=self.frequency, detrend="linear", nperseg=10 * self.frequency,
-                           noverlap=0.5 * 10 * self.frequency, axis=0, nfft=len(self.signal))
+        freqs, psd = welch(self.signal, fs=self.frequency, \
+                           detrend="linear", nperseg=10*self.frequency, \
+                           noverlap=0.5*10*self.frequency, axis=0, \
+                           nfft=len(self.signal))     
 
-        power_fft = np.concatenate([freqs[:, None], psd], axis=1)
-        self._power_spectrum = power_fft
+        power_fft = np.concatenate( [freqs[:,None], psd], axis=1)
+        self._power_spectrum  = power_fft
 
-    def _compute_sway_density(self, radius=0.3) -> None:
 
+
+    def _compute_sway_density(self, radius=0.3)-> None:  
+        
         """
         Sway Density is computed by default for a 3 mm radius.
         """
         signal = np.array(self.signal)
-        sway = np.zeros(len(signal) - 1)
+        sway = np.zeros(len(signal)-1)
+        
+        for t in range(len(signal)-1):
 
-        for t in range(len(signal) - 1):
-
-            stopping_point = t + 1
-            while stopping_point < len(signal):
-                if np.linalg.norm(signal[stopping_point] - signal[t]) > radius:
+        
+            stopping_point = t+1
+            while stopping_point<len(signal):
+                if np.linalg.norm(signal[stopping_point] - signal[t])>radius:
                     break
-                stopping_point += 1
-
-            starting_point = t - 1
-            while starting_point >= 0:
-                if np.linalg.norm(signal[starting_point] - signal[t]) > radius:
+                stopping_point+=1
+                
+            starting_point = t-1
+            while starting_point>=0:
+                if np.linalg.norm(signal[starting_point] - signal[t])>radius:
                     break
-                starting_point -= 1
+                starting_point-=1
+                
+            start = starting_point+1
+            stop = stopping_point-1
+                
+            sway[t] = stop-start
 
-            start = starting_point + 1
-            stop = stopping_point - 1
-
-            sway[t] = stop - start
-
+ 
         sway = sway / self.frequency
 
         nyq = 0.5 * self.frequency
@@ -196,61 +242,67 @@ class Stabilogram():
 
         b, a = butter(N=4, Wn=high, btype='lowpass')
 
-        sway = filtfilt(b, a, sway, axis=0)
-
+        sway = filtfilt(b, a, sway, axis=0)    
+                
         self._sway_density = sway
 
-    def _compute_diffusion_plot(self, duration_ratio=1 / 3) -> None:
+
+        
+    def _compute_diffusion_plot(self, duration_ratio=1/3)-> None:  
         """
         Compute the diffusion plot of the stabilogram. duration_ratio parameter set the limit for the computation, and should only be modified by experts familiar with the diffusion plot 
-        """
+        """ 
 
         n = len(self.signal)
         max_ind = int(n * duration_ratio)
-        time = np.arange(n) / self.frequency
-        msd = [np.array([0, 0])] + [np.mean((self.signal[i:, :] - self.signal[:(n - i), :]) ** 2, axis=0) for i in
-                                    range(1, max_ind + 1)]
-        diffusion_plot = np.concatenate([time[:max_ind + 1, None], np.array(msd)], axis=1)
+        time = np.arange(n)/self.frequency
+        msd = [np.array([0,0])] + [np.mean((self.signal[i:,:] - self.signal[:(n-i),:])**2,axis=0) for i in range(1,max_ind+1)]
+        diffusion_plot = np.concatenate([time[:max_ind+1,None], np.array(msd)], axis=1)
         self._diffusion_plot = diffusion_plot
 
-    def _compute_speed(self, window_length=5, polyorder=3) -> None:
+
+    def _compute_speed(self, window_length=5, polyorder=3) -> None:  
         """
         Speed is computed using savgol filter. Default parameters are the one used in the paper. 
         """
         cop = self.signal
-        spd_savgol = savgol_filter(x=cop, window_length=window_length, polyorder=polyorder, deriv=1, axis=0,
-                                   delta=1 / self.frequency)
+        spd_savgol = savgol_filter( x = cop, window_length=window_length, polyorder=polyorder, deriv= 1, axis=0, delta=1/self.frequency  )
         self._speed = spd_savgol
+
 
     def _test_correct_format(self) -> None:
         assert self.raw_signal is not None, "Please provide a signal first"
-        assert self._sampling_ok, "Please resample the signal first, using the function resample "
-        assert self.signal is not None, "Error, please resample and filter the signal again"
+        assert self._sampling_ok, "Please resample the signal first, using the function resample " 
+        assert self.signal is not None,  "Error, please resample and filter the signal again"
+            
 
-    #   ===================================================================
-    #    Defines the properties to access the transformations of the signal
-    #   ===================================================================
 
-    def __len__(self) -> int:
+#   ===================================================================
+#    Defines the properties to access the transformations of the signal
+#   ===================================================================
+
+    def __len__(self)-> int:
         self._test_correct_format
-        return (len(self.signal))
+        return(len(self.signal))
+        
 
     @property
     def medio_lateral(self) -> np.ndarray:
         self._test_correct_format()
-        return self.signal[:, 0:1]
+        return self.signal[:,0:1]
 
     @property
     def antero_posterior(self) -> np.ndarray:
         self._test_correct_format()
-        return self.signal[:, 1:2]
-
+        return self.signal[:,1:2]
+        
     @property
     def sway_density(self) -> np.ndarray:
         self._test_correct_format()
         if self._sway_density is None:
             self._compute_sway_density(self.sway_density_radius)
         return self._sway_density
+
 
     @property
     def speed(self) -> np.ndarray:
@@ -259,6 +311,7 @@ class Stabilogram():
             self._compute_speed()
         return self._speed
 
+
     @property
     def power_spectrum(self) -> np.ndarray:
         self._test_correct_format()
@@ -266,48 +319,57 @@ class Stabilogram():
             self._compute_power_spectrum()
         return self._power_spectrum
 
+
     @property
     def radius(self) -> np.ndarray:
         self._test_correct_format()
         if self._radius is None:
             self._compute_radius()
         return self._radius
-
+    
     @property
     def diffusion_plot(self) -> np.ndarray:
         self._test_correct_format()
         if self._diffusion_plot is None:
             self._compute_diffusion_plot()
         return self._diffusion_plot
+            
+
 
     def get_signal(self, name, **kwargs) -> np.ndarray:
-
+        
+        
+        
         if name == labels.ML:
             return self.medio_lateral
-        if name == labels.AP:
+        if name == labels.AP :
             return self.antero_posterior
-        if name == labels.MLAP:
+        if name == labels.MLAP :
             return self.signal
-        if name == labels.RADIUS:
+        if name == labels.RADIUS :
             return self.radius
-        if name == labels.SWAY_DENSITY:
+        if name == labels.SWAY_DENSITY :
             self.sway_density_radius = kwargs["sway_density_radius"]
-            return self.sway_density
-        if name == labels.PSD_ML:
-            return self.power_spectrum[:, 0], self.power_spectrum[:, 1]
-        if name == labels.PSD_AP:
-            return self.power_spectrum[:, 0], self.power_spectrum[:, 2]
+            return self.sway_density    
+        if name == labels.PSD_ML :
+            return self.power_spectrum[:,0], self.power_spectrum[:,1]
+        if name == labels.PSD_AP :
+            return self.power_spectrum[:,0], self.power_spectrum[:,2]
         if name == labels.SPD_ML:
-            return self.speed[:, 0:1]
+            return self.speed[:,0:1] 
         if name == labels.SPD_AP:
-            return self.speed[:, 1:2]
+            return self.speed[:,1:2]
         if name == labels.SPD_MLAP:
-            return np.linalg.norm(self.speed, axis=1)
+            return np.linalg.norm(self.speed,axis=1)
         if name == labels.DIFF_ML:
-            return self.diffusion_plot[:, 0], self.diffusion_plot[:, 1]
+            return self.diffusion_plot[:,0], self.diffusion_plot[:,1]
         if name == labels.DIFF_AP:
-            return self.diffusion_plot[:, 0], self.diffusion_plot[:, 2]
+            return self.diffusion_plot[:,0], self.diffusion_plot[:,2]
         if name == labels.DIFF_MLAP:
-            return self.diffusion_plot[:, 0], self.diffusion_plot[:, 1] + self.diffusion_plot[:,
-                                                                          2]  # is it a sum really ?
+            return self.diffusion_plot[:,0], self.diffusion_plot[:,1]+self.diffusion_plot[:,2]   # is it a sum really ?
         raise NotImplementedError
+
+
+
+
+
