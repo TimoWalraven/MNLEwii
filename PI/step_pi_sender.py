@@ -54,7 +54,7 @@ def get_raw_measurement(device: evdev.InputDevice):
             # TODO: optimise cpu usage when no event is received
             if None in data:
                 if tries == 0:
-                    time.sleep(1)
+                    time.sleep(0.5)
                 else:
                     tries -= 1
                 # This measurement failed to read one of the sensors, try again.
