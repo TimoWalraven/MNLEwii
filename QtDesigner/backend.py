@@ -23,6 +23,7 @@ class STEPviewer:
         self.ui = frontend.Ui_MainWindow()
         self.win = QMainWindow()
         self.ui.setupUi(self.win)
+        self.win.showMaximized()
 
         # global variables
         self.ui.modes.currentChanged.connect(self.switchmode)
@@ -31,6 +32,17 @@ class STEPviewer:
         self.livex = []
         self.livey = []
         self.analysisdata = np.array([])
+        self.patientinfo = {
+            "stance": "",
+            "eyes": "",
+            "surface": "",
+            "age": "",
+            "height": "",
+            "weight": "",
+            "condition": "",
+            "medication": "",
+            "notes": ""
+        }
         self.idx = 0
 
         self.display = False
@@ -335,7 +347,6 @@ class STEPviewer:
             raise ValueError("Clean NaN values first")
 
         stato = Stabilogram()
-        print(data)
         stato.from_array(array=data, resample_frequency=target_frequency)
         # add time to stato
         stato.time = np.linspace(0, len(stato.signal) / target_frequency, len(stato.signal))
