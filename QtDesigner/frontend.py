@@ -27,7 +27,7 @@ class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         if not MainWindow.objectName():
             MainWindow.setObjectName(u"MainWindow")
-        MainWindow.resize(1600, 1000)
+        MainWindow.resize(1261, 913)
         sizePolicy = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -164,6 +164,7 @@ class Ui_MainWindow(object):
         self.stanceselect.addItem("")
         self.stanceselect.addItem("")
         self.stanceselect.addItem("")
+        self.stanceselect.addItem("")
         self.stanceselect.setObjectName(u"stanceselect")
         self.stanceselect.setEditable(True)
 
@@ -175,6 +176,7 @@ class Ui_MainWindow(object):
         self.formLayout.setWidget(2, QFormLayout.LabelRole, self.eyelabel)
 
         self.eyeselect = QComboBox(self.frame)
+        self.eyeselect.addItem("")
         self.eyeselect.addItem("")
         self.eyeselect.addItem("")
         self.eyeselect.setObjectName(u"eyeselect")
@@ -231,19 +233,19 @@ class Ui_MainWindow(object):
         self.commentlabel = QLabel(self.frame)
         self.commentlabel.setObjectName(u"commentlabel")
 
-        self.formLayout.setWidget(8, QFormLayout.LabelRole, self.commentlabel)
+        self.formLayout.setWidget(9, QFormLayout.LabelRole, self.commentlabel)
 
-        self.commentedit = QPlainTextEdit(self.frame)
-        self.commentedit.setObjectName(u"commentedit")
+        self.notesedit = QPlainTextEdit(self.frame)
+        self.notesedit.setObjectName(u"notesedit")
         sizePolicy6 = QSizePolicy(QSizePolicy.Minimum, QSizePolicy.Expanding)
         sizePolicy6.setHorizontalStretch(0)
         sizePolicy6.setVerticalStretch(0)
-        sizePolicy6.setHeightForWidth(self.commentedit.sizePolicy().hasHeightForWidth())
-        self.commentedit.setSizePolicy(sizePolicy6)
-        self.commentedit.setMinimumSize(QSize(100, 100))
-        self.commentedit.setMaximumSize(QSize(16777215, 100))
+        sizePolicy6.setHeightForWidth(self.notesedit.sizePolicy().hasHeightForWidth())
+        self.notesedit.setSizePolicy(sizePolicy6)
+        self.notesedit.setMinimumSize(QSize(100, 100))
+        self.notesedit.setMaximumSize(QSize(16777215, 100))
 
-        self.formLayout.setWidget(8, QFormLayout.FieldRole, self.commentedit)
+        self.formLayout.setWidget(9, QFormLayout.FieldRole, self.notesedit)
 
         self.conditionlabel = QLabel(self.frame)
         self.conditionlabel.setObjectName(u"conditionlabel")
@@ -251,6 +253,7 @@ class Ui_MainWindow(object):
         self.formLayout.setWidget(7, QFormLayout.LabelRole, self.conditionlabel)
 
         self.conditionselect = QComboBox(self.frame)
+        self.conditionselect.addItem("")
         self.conditionselect.addItem("")
         self.conditionselect.addItem("")
         self.conditionselect.addItem("")
@@ -263,6 +266,18 @@ class Ui_MainWindow(object):
         self.testinfolabel.setStyleSheet(u"font: 75 10pt \"MS Shell Dlg 2\";")
 
         self.formLayout.setWidget(0, QFormLayout.FieldRole, self.testinfolabel)
+
+        self.medicationlabel = QLabel(self.frame)
+        self.medicationlabel.setObjectName(u"medicationlabel")
+
+        self.formLayout.setWidget(8, QFormLayout.LabelRole, self.medicationlabel)
+
+        self.medicationselect = QComboBox(self.frame)
+        self.medicationselect.addItem("")
+        self.medicationselect.addItem("")
+        self.medicationselect.setObjectName(u"medicationselect")
+
+        self.formLayout.setWidget(8, QFormLayout.FieldRole, self.medicationselect)
 
 
         self.horizontalLayout_2.addLayout(self.formLayout)
@@ -357,18 +372,11 @@ class Ui_MainWindow(object):
         self.analysisscrollarea.setWidgetResizable(True)
         self.analysiswidgetarea = QWidget()
         self.analysiswidgetarea.setObjectName(u"analysiswidgetarea")
-        self.analysiswidgetarea.setGeometry(QRect(0, 0, 1548, 888))
+        self.analysiswidgetarea.setGeometry(QRect(0, 0, 1209, 801))
         self.verticalLayout_3 = QVBoxLayout(self.analysiswidgetarea)
         self.verticalLayout_3.setObjectName(u"verticalLayout_3")
-        self.analysiswidgetgrid = QGridLayout()
-        self.analysiswidgetgrid.setObjectName(u"analysiswidgetgrid")
-        self.widget_4 = QWidget(self.analysiswidgetarea)
-        self.widget_4.setObjectName(u"widget_4")
-        self.widget_4.setStyleSheet(u"background-color: rgb(191, 191, 191);\n"
-"border-color: rgb(0, 0, 0);")
-
-        self.analysiswidgetgrid.addWidget(self.widget_4, 1, 1, 1, 1)
-
+        self.horizontalLayout_4 = QHBoxLayout()
+        self.horizontalLayout_4.setObjectName(u"horizontalLayout_4")
         self.widget_2 = QWidget(self.analysiswidgetarea)
         self.widget_2.setObjectName(u"widget_2")
         self.widget_2.setMinimumSize(QSize(0, 400))
@@ -377,44 +385,207 @@ class Ui_MainWindow(object):
 "")
         self.horizontalLayout_3 = QHBoxLayout(self.widget_2)
         self.horizontalLayout_3.setObjectName(u"horizontalLayout_3")
-        self.tableWidget = QTableWidget(self.widget_2)
-        self.tableWidget.setObjectName(u"tableWidget")
-
-        self.horizontalLayout_3.addWidget(self.tableWidget)
-
-
-        self.analysiswidgetgrid.addWidget(self.widget_2, 1, 0, 1, 1)
-
-        self.widget = Stabilogram(self.analysiswidgetarea)
-        self.widget.setObjectName(u"widget")
-        self.widget.setMinimumSize(QSize(400, 400))
-        self.widget.setStyleSheet(u"background-color: rgb(207, 207, 207);\n"
-"border-color: rgb(0, 0, 0);")
-
-        self.analysiswidgetgrid.addWidget(self.widget, 0, 0, 1, 1)
-
-        self.verticalWidget = QWidget(self.analysiswidgetarea)
-        self.verticalWidget.setObjectName(u"verticalWidget")
-        self.verticalWidget.setMinimumSize(QSize(400, 200))
-        self.verticalLayout_4 = QVBoxLayout(self.verticalWidget)
+        self.verticalLayout_4 = QVBoxLayout()
         self.verticalLayout_4.setObjectName(u"verticalLayout_4")
-        self.analysisapwidget = ApMl(self.verticalWidget)
+        self.analysisstabilogramwidget = Stabilogram(self.widget_2)
+        self.analysisstabilogramwidget.setObjectName(u"analysisstabilogramwidget")
+        sizePolicy.setHeightForWidth(self.analysisstabilogramwidget.sizePolicy().hasHeightForWidth())
+        self.analysisstabilogramwidget.setSizePolicy(sizePolicy)
+        self.analysisstabilogramwidget.setMinimumSize(QSize(400, 400))
+
+        self.verticalLayout_4.addWidget(self.analysisstabilogramwidget)
+
+        self.generalvariableswidget = QTableWidget(self.widget_2)
+        self.generalvariableswidget.setObjectName(u"generalvariableswidget")
+        sizePolicy5.setHeightForWidth(self.generalvariableswidget.sizePolicy().hasHeightForWidth())
+        self.generalvariableswidget.setSizePolicy(sizePolicy5)
+
+        self.verticalLayout_4.addWidget(self.generalvariableswidget)
+
+
+        self.horizontalLayout_3.addLayout(self.verticalLayout_4)
+
+        self.verticalLayout_6 = QVBoxLayout()
+        self.verticalLayout_6.setObjectName(u"verticalLayout_6")
+        self.formLayout_2 = QFormLayout()
+        self.formLayout_2.setObjectName(u"formLayout_2")
+        self.formLayout_2.setFieldGrowthPolicy(QFormLayout.AllNonFixedFieldsGrow)
+        self.formLayout_2.setRowWrapPolicy(QFormLayout.DontWrapRows)
+        self.formLayout_2.setLabelAlignment(Qt.AlignRight|Qt.AlignTrailing|Qt.AlignVCenter)
+        self.formLayout_2.setFormAlignment(Qt.AlignLeading|Qt.AlignLeft|Qt.AlignTop)
+        self.formLayout_2.setHorizontalSpacing(10)
+        self.formLayout_2.setVerticalSpacing(10)
+        self.formLayout_2.setContentsMargins(10, 10, 10, 10)
+        self.stancelabel_2 = QLabel(self.widget_2)
+        self.stancelabel_2.setObjectName(u"stancelabel_2")
+
+        self.formLayout_2.setWidget(1, QFormLayout.LabelRole, self.stancelabel_2)
+
+        self.stanceselect_2 = QComboBox(self.widget_2)
+        self.stanceselect_2.addItem("")
+        self.stanceselect_2.addItem("")
+        self.stanceselect_2.addItem("")
+        self.stanceselect_2.addItem("")
+        self.stanceselect_2.addItem("")
+        self.stanceselect_2.setObjectName(u"stanceselect_2")
+        self.stanceselect_2.setEnabled(True)
+        self.stanceselect_2.setEditable(True)
+
+        self.formLayout_2.setWidget(1, QFormLayout.FieldRole, self.stanceselect_2)
+
+        self.eyelabel_2 = QLabel(self.widget_2)
+        self.eyelabel_2.setObjectName(u"eyelabel_2")
+
+        self.formLayout_2.setWidget(2, QFormLayout.LabelRole, self.eyelabel_2)
+
+        self.eyeselect_2 = QComboBox(self.widget_2)
+        self.eyeselect_2.addItem("")
+        self.eyeselect_2.addItem("")
+        self.eyeselect_2.addItem("")
+        self.eyeselect_2.setObjectName(u"eyeselect_2")
+        self.eyeselect_2.setEnabled(True)
+        self.eyeselect_2.setEditable(True)
+
+        self.formLayout_2.setWidget(2, QFormLayout.FieldRole, self.eyeselect_2)
+
+        self.line_2 = QFrame(self.widget_2)
+        self.line_2.setObjectName(u"line_2")
+        self.line_2.setFrameShape(QFrame.HLine)
+        self.line_2.setFrameShadow(QFrame.Sunken)
+
+        self.formLayout_2.setWidget(3, QFormLayout.LabelRole, self.line_2)
+
+        self.patientinfolabel_2 = QLabel(self.widget_2)
+        self.patientinfolabel_2.setObjectName(u"patientinfolabel_2")
+        self.patientinfolabel_2.setStyleSheet(u"font: 75 10pt \"MS Shell Dlg 2\";")
+
+        self.formLayout_2.setWidget(3, QFormLayout.FieldRole, self.patientinfolabel_2)
+
+        self.agelabel_2 = QLabel(self.widget_2)
+        self.agelabel_2.setObjectName(u"agelabel_2")
+
+        self.formLayout_2.setWidget(4, QFormLayout.LabelRole, self.agelabel_2)
+
+        self.ageselect_2 = QSpinBox(self.widget_2)
+        self.ageselect_2.setObjectName(u"ageselect_2")
+        self.ageselect_2.setEnabled(True)
+        self.ageselect_2.setMaximum(130)
+
+        self.formLayout_2.setWidget(4, QFormLayout.FieldRole, self.ageselect_2)
+
+        self.heightlabel_2 = QLabel(self.widget_2)
+        self.heightlabel_2.setObjectName(u"heightlabel_2")
+
+        self.formLayout_2.setWidget(5, QFormLayout.LabelRole, self.heightlabel_2)
+
+        self.heightselect_2 = QSpinBox(self.widget_2)
+        self.heightselect_2.setObjectName(u"heightselect_2")
+        self.heightselect_2.setEnabled(True)
+        self.heightselect_2.setMaximum(260)
+
+        self.formLayout_2.setWidget(5, QFormLayout.FieldRole, self.heightselect_2)
+
+        self.weightlabel_2 = QLabel(self.widget_2)
+        self.weightlabel_2.setObjectName(u"weightlabel_2")
+
+        self.formLayout_2.setWidget(6, QFormLayout.LabelRole, self.weightlabel_2)
+
+        self.weightselect_2 = QSpinBox(self.widget_2)
+        self.weightselect_2.setObjectName(u"weightselect_2")
+        self.weightselect_2.setEnabled(True)
+        self.weightselect_2.setMaximum(1000)
+
+        self.formLayout_2.setWidget(6, QFormLayout.FieldRole, self.weightselect_2)
+
+        self.commentlabel_2 = QLabel(self.widget_2)
+        self.commentlabel_2.setObjectName(u"commentlabel_2")
+
+        self.formLayout_2.setWidget(9, QFormLayout.LabelRole, self.commentlabel_2)
+
+        self.notesedit_2 = QPlainTextEdit(self.widget_2)
+        self.notesedit_2.setObjectName(u"notesedit_2")
+        self.notesedit_2.setEnabled(True)
+        sizePolicy6.setHeightForWidth(self.notesedit_2.sizePolicy().hasHeightForWidth())
+        self.notesedit_2.setSizePolicy(sizePolicy6)
+        self.notesedit_2.setMinimumSize(QSize(100, 100))
+        self.notesedit_2.setMaximumSize(QSize(16777215, 100))
+
+        self.formLayout_2.setWidget(9, QFormLayout.FieldRole, self.notesedit_2)
+
+        self.conditionlabel_2 = QLabel(self.widget_2)
+        self.conditionlabel_2.setObjectName(u"conditionlabel_2")
+
+        self.formLayout_2.setWidget(7, QFormLayout.LabelRole, self.conditionlabel_2)
+
+        self.conditionselect_2 = QComboBox(self.widget_2)
+        self.conditionselect_2.addItem("")
+        self.conditionselect_2.addItem("")
+        self.conditionselect_2.addItem("")
+        self.conditionselect_2.addItem("")
+        self.conditionselect_2.setObjectName(u"conditionselect_2")
+        self.conditionselect_2.setEnabled(True)
+
+        self.formLayout_2.setWidget(7, QFormLayout.FieldRole, self.conditionselect_2)
+
+        self.testinfolabel_2 = QLabel(self.widget_2)
+        self.testinfolabel_2.setObjectName(u"testinfolabel_2")
+        self.testinfolabel_2.setStyleSheet(u"font: 75 10pt \"MS Shell Dlg 2\";")
+
+        self.formLayout_2.setWidget(0, QFormLayout.FieldRole, self.testinfolabel_2)
+
+        self.medicationlabel_2 = QLabel(self.widget_2)
+        self.medicationlabel_2.setObjectName(u"medicationlabel_2")
+
+        self.formLayout_2.setWidget(8, QFormLayout.LabelRole, self.medicationlabel_2)
+
+        self.medicationselect_2 = QComboBox(self.widget_2)
+        self.medicationselect_2.addItem("")
+        self.medicationselect_2.addItem("")
+        self.medicationselect_2.setObjectName(u"medicationselect_2")
+        self.medicationselect_2.setEnabled(True)
+
+        self.formLayout_2.setWidget(8, QFormLayout.FieldRole, self.medicationselect_2)
+
+
+        self.verticalLayout_6.addLayout(self.formLayout_2)
+
+        self.gridLayout = QGridLayout()
+        self.gridLayout.setObjectName(u"gridLayout")
+        self.analysisapwidget = ApMl(self.widget_2)
         self.analysisapwidget.setObjectName(u"analysisapwidget")
-        self.analysisapwidget.setMinimumSize(QSize(400, 200))
 
-        self.verticalLayout_4.addWidget(self.analysisapwidget)
+        self.gridLayout.addWidget(self.analysisapwidget, 0, 0, 1, 1)
 
-        self.analysismlwidget = ApMl(self.verticalWidget)
+        self.analysismlwidget = ApMl(self.widget_2)
         self.analysismlwidget.setObjectName(u"analysismlwidget")
-        self.analysismlwidget.setMinimumSize(QSize(400, 200))
 
-        self.verticalLayout_4.addWidget(self.analysismlwidget)
+        self.gridLayout.addWidget(self.analysismlwidget, 1, 0, 1, 1)
+
+        self.apvariables = QTableWidget(self.widget_2)
+        self.apvariables.setObjectName(u"apvariables")
+        sizePolicy5.setHeightForWidth(self.apvariables.sizePolicy().hasHeightForWidth())
+        self.apvariables.setSizePolicy(sizePolicy5)
+
+        self.gridLayout.addWidget(self.apvariables, 0, 1, 1, 1)
+
+        self.mlvariables = QTableWidget(self.widget_2)
+        self.mlvariables.setObjectName(u"mlvariables")
+        sizePolicy5.setHeightForWidth(self.mlvariables.sizePolicy().hasHeightForWidth())
+        self.mlvariables.setSizePolicy(sizePolicy5)
+
+        self.gridLayout.addWidget(self.mlvariables, 1, 1, 1, 1)
 
 
-        self.analysiswidgetgrid.addWidget(self.verticalWidget, 0, 1, 1, 1)
+        self.verticalLayout_6.addLayout(self.gridLayout)
 
 
-        self.verticalLayout_3.addLayout(self.analysiswidgetgrid)
+        self.horizontalLayout_3.addLayout(self.verticalLayout_6)
+
+
+        self.horizontalLayout_4.addWidget(self.widget_2)
+
+
+        self.verticalLayout_3.addLayout(self.horizontalLayout_4)
 
         self.analysisscrollarea.setWidget(self.analysiswidgetarea)
 
@@ -431,6 +602,7 @@ class Ui_MainWindow(object):
 
         self.modes.setCurrentIndex(0)
         self.stanceselect.setCurrentIndex(0)
+        self.stanceselect_2.setCurrentIndex(0)
 
 
         QMetaObject.connectSlotsByName(MainWindow)
@@ -445,30 +617,37 @@ class Ui_MainWindow(object):
         self.startrecording.setText(QCoreApplication.translate("MainWindow", u"Record", None))
         self.analyserecording.setText(QCoreApplication.translate("MainWindow", u"Analyse recording ->", None))
         self.stancelabel.setText(QCoreApplication.translate("MainWindow", u"Stance", None))
-        self.stanceselect.setItemText(0, QCoreApplication.translate("MainWindow", u"double legged", None))
-        self.stanceselect.setItemText(1, QCoreApplication.translate("MainWindow", u"left leg", None))
-        self.stanceselect.setItemText(2, QCoreApplication.translate("MainWindow", u"right leg", None))
-        self.stanceselect.setItemText(3, QCoreApplication.translate("MainWindow", u"tandem", None))
+        self.stanceselect.setItemText(0, "")
+        self.stanceselect.setItemText(1, QCoreApplication.translate("MainWindow", u"double legged", None))
+        self.stanceselect.setItemText(2, QCoreApplication.translate("MainWindow", u"left leg", None))
+        self.stanceselect.setItemText(3, QCoreApplication.translate("MainWindow", u"right leg", None))
+        self.stanceselect.setItemText(4, QCoreApplication.translate("MainWindow", u"tandem", None))
 
-        self.stanceselect.setCurrentText(QCoreApplication.translate("MainWindow", u"double legged", None))
+        self.stanceselect.setCurrentText("")
         self.eyelabel.setText(QCoreApplication.translate("MainWindow", u"Eyes", None))
-        self.eyeselect.setItemText(0, QCoreApplication.translate("MainWindow", u"open", None))
-        self.eyeselect.setItemText(1, QCoreApplication.translate("MainWindow", u"closed", None))
+        self.eyeselect.setItemText(0, "")
+        self.eyeselect.setItemText(1, QCoreApplication.translate("MainWindow", u"open", None))
+        self.eyeselect.setItemText(2, QCoreApplication.translate("MainWindow", u"closed", None))
 
-        self.eyeselect.setCurrentText(QCoreApplication.translate("MainWindow", u"open", None))
+        self.eyeselect.setCurrentText("")
         self.patientinfolabel.setText(QCoreApplication.translate("MainWindow", u"Patient info", None))
         self.agelabel.setText(QCoreApplication.translate("MainWindow", u"Age", None))
         self.heightlabel.setText(QCoreApplication.translate("MainWindow", u"Height", None))
         self.heightselect.setSuffix(QCoreApplication.translate("MainWindow", u" (cm)", None))
         self.weightlabel.setText(QCoreApplication.translate("MainWindow", u"Weight", None))
         self.weightselect.setSuffix(QCoreApplication.translate("MainWindow", u" (Kg)", None))
-        self.commentlabel.setText(QCoreApplication.translate("MainWindow", u"Comments", None))
+        self.commentlabel.setText(QCoreApplication.translate("MainWindow", u"Notes", None))
         self.conditionlabel.setText(QCoreApplication.translate("MainWindow", u"Condition", None))
-        self.conditionselect.setItemText(0, QCoreApplication.translate("MainWindow", u"Healthy", None))
-        self.conditionselect.setItemText(1, QCoreApplication.translate("MainWindow", u"Parkinsons", None))
-        self.conditionselect.setItemText(2, QCoreApplication.translate("MainWindow", u"Stroke", None))
+        self.conditionselect.setItemText(0, "")
+        self.conditionselect.setItemText(1, QCoreApplication.translate("MainWindow", u"Healthy", None))
+        self.conditionselect.setItemText(2, QCoreApplication.translate("MainWindow", u"Parkinsons", None))
+        self.conditionselect.setItemText(3, QCoreApplication.translate("MainWindow", u"Stroke", None))
 
         self.testinfolabel.setText(QCoreApplication.translate("MainWindow", u"Test info", None))
+        self.medicationlabel.setText(QCoreApplication.translate("MainWindow", u"Medication", None))
+        self.medicationselect.setItemText(0, "")
+        self.medicationselect.setItemText(1, QCoreApplication.translate("MainWindow", u"Painkillers", None))
+
         self.modes.setTabText(self.modes.indexOf(self.livetab), QCoreApplication.translate("MainWindow", u"Live", None))
         self.analysisopenfile.setText(QCoreApplication.translate("MainWindow", u"Open", None))
         self.analysisplay.setText(QCoreApplication.translate("MainWindow", u"\u23ef\ufe0f", None))
@@ -477,6 +656,38 @@ class Ui_MainWindow(object):
         self.analysisrestart.setText(QCoreApplication.translate("MainWindow", u"Restart", None))
         self.saverecording.setText(QCoreApplication.translate("MainWindow", u"Save report", None))
         self.viewselection.setText(QCoreApplication.translate("MainWindow", u"Views", None))
+        self.stancelabel_2.setText(QCoreApplication.translate("MainWindow", u"Stance", None))
+        self.stanceselect_2.setItemText(0, "")
+        self.stanceselect_2.setItemText(1, QCoreApplication.translate("MainWindow", u"double legged", None))
+        self.stanceselect_2.setItemText(2, QCoreApplication.translate("MainWindow", u"left leg", None))
+        self.stanceselect_2.setItemText(3, QCoreApplication.translate("MainWindow", u"right leg", None))
+        self.stanceselect_2.setItemText(4, QCoreApplication.translate("MainWindow", u"tandem", None))
+
+        self.stanceselect_2.setCurrentText("")
+        self.eyelabel_2.setText(QCoreApplication.translate("MainWindow", u"Eyes", None))
+        self.eyeselect_2.setItemText(0, "")
+        self.eyeselect_2.setItemText(1, QCoreApplication.translate("MainWindow", u"open", None))
+        self.eyeselect_2.setItemText(2, QCoreApplication.translate("MainWindow", u"closed", None))
+
+        self.eyeselect_2.setCurrentText("")
+        self.patientinfolabel_2.setText(QCoreApplication.translate("MainWindow", u"Patient info", None))
+        self.agelabel_2.setText(QCoreApplication.translate("MainWindow", u"Age", None))
+        self.heightlabel_2.setText(QCoreApplication.translate("MainWindow", u"Height", None))
+        self.heightselect_2.setSuffix(QCoreApplication.translate("MainWindow", u" (cm)", None))
+        self.weightlabel_2.setText(QCoreApplication.translate("MainWindow", u"Weight", None))
+        self.weightselect_2.setSuffix(QCoreApplication.translate("MainWindow", u" (Kg)", None))
+        self.commentlabel_2.setText(QCoreApplication.translate("MainWindow", u"Notes", None))
+        self.conditionlabel_2.setText(QCoreApplication.translate("MainWindow", u"Condition", None))
+        self.conditionselect_2.setItemText(0, "")
+        self.conditionselect_2.setItemText(1, QCoreApplication.translate("MainWindow", u"Healthy", None))
+        self.conditionselect_2.setItemText(2, QCoreApplication.translate("MainWindow", u"Parkinsons", None))
+        self.conditionselect_2.setItemText(3, QCoreApplication.translate("MainWindow", u"Stroke", None))
+
+        self.testinfolabel_2.setText(QCoreApplication.translate("MainWindow", u"Test info | <DATE> | <TIME>", None))
+        self.medicationlabel_2.setText(QCoreApplication.translate("MainWindow", u"Medication", None))
+        self.medicationselect_2.setItemText(0, "")
+        self.medicationselect_2.setItemText(1, QCoreApplication.translate("MainWindow", u"Painkillers", None))
+
         self.modes.setTabText(self.modes.indexOf(self.analysistab), QCoreApplication.translate("MainWindow", u"Analysis", None))
     # retranslateUi
 
