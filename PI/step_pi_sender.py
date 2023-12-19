@@ -26,6 +26,7 @@ def get_raw_measurement(device: evdev.InputDevice):
     data = [None] * 4
     length = 228
     width = 433
+    tries = 50
     while True:
         event = device.read_one()
         if event is None:
@@ -52,9 +53,12 @@ def get_raw_measurement(device: evdev.InputDevice):
         elif event.code == ecodes.SYN_REPORT and event.value == 0:
             # TODO: optimise cpu usage when no event is received
             if None in data:
+                if tries == 0:
+                    time.sleep(1)
+                else:
+                    tries -= 1
                 # This measurement failed to read one of the sensors, try again.
                 data = [None] * 4
-                time.sleep(0.01)
                 continue
             else:
                 # calculate x and y cop coordinates in mm
