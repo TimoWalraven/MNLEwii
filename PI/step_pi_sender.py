@@ -54,9 +54,8 @@ def get_raw_measurement(device: evdev.InputDevice):
             # TODO: optimise cpu usage when no event is received
             if None in data:
                 if tries == 0:
-                    time.sleep(0.5)
-                    print(data)
-                    print("no person detected, trying again...")
+                    time.sleep(1)
+                    tries += 15
                 else:
                     tries -= 1
                 # This measurement failed to read one of the sensors, try again.
@@ -89,7 +88,6 @@ if __name__ == "__main__":
             except Exception as e:
                 print("Exception, closing serial port...")
                 break
-
             data = [round(i, 4) for i in data]
             ser.reset_output_buffer()
             ser.write(f"{str(data)}\n".encode())

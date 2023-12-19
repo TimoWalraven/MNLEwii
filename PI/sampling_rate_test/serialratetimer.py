@@ -3,13 +3,14 @@
 from serial import Serial
 import numpy as np
 import time
+import os.path
 
 ### Variables ###
 port = 'COM6'
-test_length = 5  # seconds
+test_length = 20  # seconds
 
 save = True
-filename = 'sampling_test_Zero_W_1'
+filename = 'Zero W/20s_nosleep_nowobble'
 
 plot = True
 #################
@@ -20,8 +21,6 @@ if __name__ == "__main__":
     print("Opening serial port...")
     with Serial(port, 9600, timeout=1) as ser:
         print(f"Serial port {ser.name} opened.")
-        # list p
-
         # countdown 5 seconds
         for i in range(5, 0, -1):
             print(f"Starting in {i}...")
@@ -57,5 +56,15 @@ if __name__ == "__main__":
         plt.title('Signal variance')
         plt.show()
     if save:
-        np.savetxt(f"{filename}.csv", intervals, delimiter=';')
+        if filename == '':
+            filename = input("Enter filename: ")
+        elif filename[-4:] == '.csv':
+            filename = filename[:-4]
+        #check if file exists, if so, add number to end
+        elif os.path.isfile(f"{filename}.csv"):
+            i = 1
+            while os.path.isfile(f"{filename}({i}).csv"):
+                i += 1
+            filename = f"{filename}({i})"
+        np.savetxt(f"{filename}.csv", intervals, delimiter=';', fmt='%1.5f')
         print("Data saved to file.")

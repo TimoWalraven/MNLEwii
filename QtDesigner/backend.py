@@ -335,6 +335,7 @@ class STEPviewer:
             raise ValueError("Clean NaN values first")
 
         stato = Stabilogram()
+        print(data)
         stato.from_array(array=data, resample_frequency=target_frequency)
         # add time to stato
         stato.time = np.linspace(0, len(stato.signal) / target_frequency, len(stato.signal))
