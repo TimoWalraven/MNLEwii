@@ -27,6 +27,24 @@ class STEPviewer:
         self.win.showMaximized()
 
         # global variables
+        try:
+            import configparser
+            config = configparser.ConfigParser()
+            self.config = config.read('STEPconfig.ini')
+            self.config = {
+                "practitioner": config['GENERAL']['practitioner'],
+                "url": config['RESEARCHDRIVE']['url'],
+                "username": config['RESEARCHDRIVE']['username'],
+                "password": config['RESEARCHDRIVE']['password']
+            }
+            print(self.config)
+        except Exception as e:
+            self.config = {
+                "practitioner": "unknown",
+                "url": None,
+                "username": None,
+                "password": None
+            }
         self.ui.modes.currentChanged.connect(self.switchmode)
         self.mode = self.ui.modes.currentIndex()
 
@@ -52,11 +70,13 @@ class STEPviewer:
             "duration": "",
             "stance": "",
             "eyes": "",
+            "identifier": "",
             "age": "",
             "height": "",
             "weight": "",
             "condition": "",
             "medication": "",
+            "fallhistory": "",
             "notes": ""
         }
         self.recordstate = False
@@ -72,11 +92,13 @@ class STEPviewer:
                 "duration": "10 s",
                 "stance": "double legged",
                 "eyes": "open",
+                "identifier": "dummyperson1",
                 "age": "50",
                 "height": "180 cm",
                 "weight": "83 kg",
                 "condition": "",
                 "medication": "",
+                "fallhistory": "",
                 "notes": ""
             }
 
@@ -91,6 +113,9 @@ class STEPviewer:
         self.ui.analyserecording.clicked.connect(self.analyserecording)
         if not dummy:
             self.ui.analyserecording.setDisabled(True)
+
+        # Patient info
+        self.ui.identifierreload.clicked.connect(self.randompatient)
 
         # Plots
         self.ui.liveapwidget.setmode('AP')
@@ -123,7 +148,11 @@ class STEPviewer:
         # Save button
         self.ui.saverecording.clicked.connect(self.saverecording)  # save button
         self.ui.saverecording.setDisabled(True)
-        # Widgets
+
+        # Patient info
+        self.ui.identifierreload_2.clicked.connect(self.randompatient)
+
+        # Plots
         self.ui.analysisapwidget.setmode('AP')
         self.ui.analysismlwidget.setmode('ML')
 
@@ -201,7 +230,7 @@ class STEPviewer:
     def update(self):
 
         # Live mode
-        # TODO: add time to live plot
+        # TODO: add correct time to live plot
         if self.mode == 0:
             self.ui.livestabilogramwidget.line.setData(self.livex, self.livey)
             self.ui.liveapwidget.line.setData(np.linspace(0, 30, len(self.livey)), self.livey)
@@ -240,18 +269,55 @@ class STEPviewer:
         QApplication.processEvents()
 
     def saverecording(self):
-        # TODO: add metadata to file
-        if not self.recording:
+        if len(self.recording) < 1:
             print("No recording found.")
             return
         elif self.recordstate:
             print("Recording in progress, please wait for recording to finish.")
             return
-        filename = QFileDialog.getSaveFileName(self.window, 'Save File', '', 'CSV(*.csv)')
-        with open(filename[0], 'w') as f:
-            f.write('"time" "x" "y"\n')
-            for line in self.recording:
-                f.write(f"{line[0]} {line[1]} {line[2]}\n")
+        filename = QFileDialog.getSaveFileName(self.win, 'Save File', '', 'Excel Files (*.xlsx)')
+        import pandas as pd
+        data_df = pd.DataFrame(self.recording, columns=['time', 'x', 'y'])
+        data_df['time'] = data_df['time'].round(2)
+        data_df['x'] = data_df['x'].round(4)
+        data_df['y'] = data_df['y'].round(4)
+
+        metadata_df = pd.DataFrame(self.recordinginfo, index=[0])
+        metadata_df['age'] = metadata_df['age'].astype(str)
+        metadata_df['height'] = metadata_df['height'].astype(str)
+        metadata_df['weight'] = metadata_df['weight'].astype(str)
+        metadata_df['duration'] = metadata_df['duration'].astype(str)
+        metadata_df['date'] = metadata_df['date'].astype(str)
+        metadata_df['time'] = metadata_df['time'].astype(str)
+        metadata_df['identifier'] = metadata_df['identifier'].astype(str)
+        metadata_df['stance'] = metadata_df['stance'].astype(str)
+        metadata_df['eyes'] = metadata_df['eyes'].astype(str)
+        metadata_df['condition'] = metadata_df['condition'].astype(str)
+        metadata_df['medication'] = metadata_df['medication'].astype(str)
+        metadata_df['fallhistory'] = metadata_df['fallhistory'].astype(str)
+        metadata_df['notes'] = metadata_df['notes'].astype(str)
+        metadata_df['practitioner'] = self.config['practitioner']
+
+        succes = False
+        try:
+            print(f"Saving file to {filename[0]}")
+            with pd.ExcelWriter(f'{filename[0]}', engine='xlsxwriter' , mode='w') as writer:
+                data_df.to_excel(writer, sheet_name='Data', index=False)
+                metadata_df.to_excel(writer, sheet_name='Metadata', index=False)
+                print("File successfully saved locally.")
+                succes = True
+        except Exception as e:
+            print(f"Error while saving file: {e}")
+            return
+
+        if succes:
+            try:
+                if self.ui.contribute.isChecked():
+                    self.sendtoresearchdrive(filename[0])
+                    print("File successfully saved on ResearchDrive.")
+            except Exception as e:
+                print(f"Error while uploading file: {e}")
+                return
 
     def openrecording(self):
         # ToDo: add option to resample when loading file
@@ -314,11 +380,13 @@ class STEPviewer:
                                   "duration": self.ui.recordlength.value(),
                                   "stance": self.ui.stanceselect.currentText(),
                                   "eyes": self.ui.eyeselect.currentText(),
+                                  "identifier": self.ui.identifierselect.currentText(),
                                   "age": self.ui.ageselect.value(),
                                   "height": self.ui.heightselect.value(),
                                   "weight": self.ui.weightselect.value(),
                                   "condition": self.ui.conditionselect.currentText(),
                                   "medication": self.ui.medicationselect.currentText(),
+                                  "fallhistory": self.ui.fallhistoryselect.currentText(),
                                   "notes": self.ui.notesedit.toPlainText()}
 
             self.ui.startrecording.setDisabled(False)
@@ -335,7 +403,6 @@ class STEPviewer:
             recordthread.daemon = True
             recordthread.start()
             # check if recording was successful
-
 
         else:
             print("Unknown error occurred.")
@@ -445,17 +512,20 @@ class STEPviewer:
         pass
 
     def updatepatientinfo(self, info=None):
+
         if not info:
             self.ui.testinfolabel_2.setText(
                 f"Test info | {datetime.datetime.now().strftime('%d-%m-%y')} | {datetime.datetime.now().strftime('%H:%M:%S')}")
             self.ui.maxtime.setText(f"{np.max(self.recording[:, 0]):.2f} s")
             self.ui.stanceselect_2.setCurrentText(self.ui.stanceselect.currentText())
+            self.ui.identifierselect_2.setText(self.ui.identifierselect.text())
             self.ui.eyeselect_2.setCurrentText(self.ui.eyeselect.currentText())
             self.ui.ageselect_2.setValue(self.ui.ageselect.value())
             self.ui.heightselect_2.setValue(self.ui.heightselect.value())
             self.ui.weightselect_2.setValue(self.ui.weightselect.value())
             self.ui.conditionselect_2.setCurrentText(self.ui.conditionselect.currentText())
             self.ui.medicationselect_2.setCurrentText(self.ui.medicationselect.currentText())
+            self.ui.fallhistoryselect_2.setCurrentText(self.ui.fallhistoryselect.currentText())
             self.ui.notesedit_2.setPlainText(self.ui.notesedit.toPlainText())
 
         elif isinstance(info, dict):
@@ -464,11 +534,13 @@ class STEPviewer:
                 self.ui.maxtime.setText(f"{info['duration']} s")
                 self.ui.stanceselect_2.setCurrentText(info['stance'])
                 self.ui.eyeselect_2.setCurrentText(info['eyes'])
+                self.ui.identifierselect_2.setText(info['identifier'])
                 self.ui.ageselect_2.setValue(info['age'])
                 self.ui.heightselect_2.setValue(info['height'])
                 self.ui.weightselect_2.setValue(info['weight'])
                 self.ui.conditionselect_2.setCurrentText(info['condition'])
                 self.ui.medicationselect_2.setCurrentText(info['medication'])
+                self.ui.fallhistoryselect_2.setCurrentText(info['fallhistory'])
                 self.ui.notesedit_2.setPlainText(info['notes'])
             except Exception as e:
                 print(f"Error while updating patient info: {e}")
@@ -478,6 +550,31 @@ class STEPviewer:
 
         pass
 
+    def sendtoresearchdrive(self, filepath: str):
+        if None in (self.config['url'], self.config['username'], self.config['password']):
+            print("No url, username or password found: please enter your credentials in the config file.")
+        else:
+            print("Uploading file to research drive..")
+            import subprocess
+            url = self.config['url']
+            username = self.config['username']
+            password = self.config['password']
+            filename = filepath.split('/')[-1]
+            command = f'curl -T {filepath} -u "{username}:{password}" {url}{filename}'
+            try:
+                subprocess.run(command, shell=False)
+                print("File uploaded successfully.")
+            except Exception as e:
+                print(f"Error while uploading file: {e}")
+            pass
+
+    def randompatient(self):
+        import random
+        import string
+        self.recordinginfo['identifier'] = ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(10))
+        self.updatepatientinfo(self.recordinginfo)
 
 if __name__ == '__main__':
-    plot = STEPviewer(dummy=False)
+    plot = STEPviewer(dummy=True)
+
+

@@ -42,7 +42,7 @@
        <string notr="true"/>
       </property>
       <property name="currentIndex">
-       <number>0</number>
+       <number>1</number>
       </property>
       <widget class="QWidget" name="livetab">
        <property name="sizePolicy">
@@ -144,6 +144,14 @@ border-radius: 10px; </string>
           </item>
           <item>
            <widget class="QPushButton" name="startrecording">
+            <property name="font">
+             <font>
+              <kerning>false</kerning>
+             </font>
+            </property>
+            <property name="styleSheet">
+             <string notr="true"/>
+            </property>
             <property name="text">
              <string>Record</string>
             </property>
@@ -156,6 +164,19 @@ border-radius: 10px; </string>
               <width>150</width>
               <height>0</height>
              </size>
+            </property>
+            <property name="font">
+             <font>
+              <weight>50</weight>
+              <bold>false</bold>
+              <stylestrategy>PreferDefault</stylestrategy>
+             </font>
+            </property>
+            <property name="focusPolicy">
+             <enum>Qt::StrongFocus</enum>
+            </property>
+            <property name="contextMenuPolicy">
+             <enum>Qt::DefaultContextMenu</enum>
             </property>
             <property name="text">
              <string>Analyse recording -&gt;</string>
@@ -232,16 +253,16 @@ border-radius: 10px; </string>
                   <number>10</number>
                  </property>
                  <property name="leftMargin">
-                  <number>10</number>
+                  <number>0</number>
                  </property>
                  <property name="topMargin">
-                  <number>10</number>
+                  <number>0</number>
                  </property>
                  <property name="rightMargin">
-                  <number>10</number>
+                  <number>0</number>
                  </property>
                  <property name="bottomMargin">
-                  <number>10</number>
+                  <number>0</number>
                  </property>
                  <item row="1" column="0">
                   <widget class="QLabel" name="stancelabel">
@@ -337,28 +358,28 @@ border-radius: 10px; </string>
                    </property>
                   </widget>
                  </item>
-                 <item row="4" column="0">
+                 <item row="5" column="0">
                   <widget class="QLabel" name="agelabel">
                    <property name="text">
                     <string>Age</string>
                    </property>
                   </widget>
                  </item>
-                 <item row="4" column="1">
+                 <item row="5" column="1">
                   <widget class="QSpinBox" name="ageselect">
                    <property name="maximum">
                     <number>130</number>
                    </property>
                   </widget>
                  </item>
-                 <item row="5" column="0">
+                 <item row="6" column="0">
                   <widget class="QLabel" name="heightlabel">
                    <property name="text">
                     <string>Height</string>
                    </property>
                   </widget>
                  </item>
-                 <item row="5" column="1">
+                 <item row="6" column="1">
                   <widget class="QSpinBox" name="heightselect">
                    <property name="suffix">
                     <string> (cm)</string>
@@ -368,14 +389,14 @@ border-radius: 10px; </string>
                    </property>
                   </widget>
                  </item>
-                 <item row="6" column="0">
+                 <item row="7" column="0">
                   <widget class="QLabel" name="weightlabel">
                    <property name="text">
                     <string>Weight</string>
                    </property>
                   </widget>
                  </item>
-                 <item row="6" column="1">
+                 <item row="7" column="1">
                   <widget class="QSpinBox" name="weightselect">
                    <property name="suffix">
                     <string> (Kg)</string>
@@ -385,14 +406,14 @@ border-radius: 10px; </string>
                    </property>
                   </widget>
                  </item>
-                 <item row="9" column="0">
+                 <item row="11" column="0">
                   <widget class="QLabel" name="commentlabel">
                    <property name="text">
                     <string>Notes</string>
                    </property>
                   </widget>
                  </item>
-                 <item row="9" column="1">
+                 <item row="11" column="1">
                   <widget class="QPlainTextEdit" name="notesedit">
                    <property name="sizePolicy">
                     <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
@@ -403,7 +424,7 @@ border-radius: 10px; </string>
                    <property name="minimumSize">
                     <size>
                      <width>100</width>
-                     <height>100</height>
+                     <height>30</height>
                     </size>
                    </property>
                    <property name="maximumSize">
@@ -414,14 +435,14 @@ border-radius: 10px; </string>
                    </property>
                   </widget>
                  </item>
-                 <item row="7" column="0">
+                 <item row="8" column="0">
                   <widget class="QLabel" name="conditionlabel">
                    <property name="text">
                     <string>Condition</string>
                    </property>
                   </widget>
                  </item>
-                 <item row="7" column="1">
+                 <item row="8" column="1">
                   <widget class="QComboBox" name="conditionselect">
                    <item>
                     <property name="text">
@@ -455,15 +476,18 @@ border-radius: 10px; </string>
                    </property>
                   </widget>
                  </item>
-                 <item row="8" column="0">
+                 <item row="9" column="0">
                   <widget class="QLabel" name="medicationlabel">
                    <property name="text">
                     <string>Medication</string>
                    </property>
                   </widget>
                  </item>
-                 <item row="8" column="1">
+                 <item row="9" column="1">
                   <widget class="QComboBox" name="medicationselect">
+                   <property name="editable">
+                    <bool>true</bool>
+                   </property>
                    <item>
                     <property name="text">
                      <string/>
@@ -475,6 +499,63 @@ border-radius: 10px; </string>
                     </property>
                    </item>
                   </widget>
+                 </item>
+                 <item row="10" column="0">
+                  <widget class="QLabel" name="fallhistorylabel">
+                   <property name="text">
+                    <string>Fall history</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="10" column="1">
+                  <widget class="QComboBox" name="fallhistoryselect">
+                   <property name="editable">
+                    <bool>true</bool>
+                   </property>
+                   <item>
+                    <property name="text">
+                     <string>No recent incidents</string>
+                    </property>
+                   </item>
+                   <item>
+                    <property name="text">
+                     <string>Fell in last year</string>
+                    </property>
+                   </item>
+                  </widget>
+                 </item>
+                 <item row="4" column="0">
+                  <widget class="QLabel" name="identifierlabel">
+                   <property name="text">
+                    <string>Identifier</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="4" column="1">
+                  <layout class="QHBoxLayout" name="horizontalLayout_5">
+                   <item>
+                    <widget class="QLineEdit" name="identifierselect"/>
+                   </item>
+                   <item>
+                    <widget class="QPushButton" name="identifierreload">
+                     <property name="sizePolicy">
+                      <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+                       <horstretch>0</horstretch>
+                       <verstretch>0</verstretch>
+                      </sizepolicy>
+                     </property>
+                     <property name="maximumSize">
+                      <size>
+                       <width>80</width>
+                       <height>16777215</height>
+                      </size>
+                     </property>
+                     <property name="text">
+                      <string>regenerate</string>
+                     </property>
+                    </widget>
+                   </item>
+                  </layout>
                  </item>
                 </layout>
                </item>
@@ -540,6 +621,13 @@ border-radius: 10px; </string>
            </widget>
           </item>
           <item>
+           <widget class="Line" name="line_3">
+            <property name="orientation">
+             <enum>Qt::Vertical</enum>
+            </property>
+           </widget>
+          </item>
+          <item>
            <widget class="QPushButton" name="analysisplay">
             <property name="text">
              <string>⏯️</string>
@@ -593,16 +681,32 @@ border-radius: 10px; </string>
            </widget>
           </item>
           <item>
-           <widget class="QPushButton" name="saverecording">
-            <property name="text">
-             <string>Save report</string>
+           <widget class="Line" name="line_4">
+            <property name="orientation">
+             <enum>Qt::Vertical</enum>
             </property>
            </widget>
           </item>
           <item>
-           <widget class="QPushButton" name="viewselection">
+           <widget class="QCheckBox" name="contribute">
+            <property name="layoutDirection">
+             <enum>Qt::RightToLeft</enum>
+            </property>
             <property name="text">
-             <string>Views</string>
+             <string>Contribute to reseach?</string>
+            </property>
+            <property name="checked">
+             <bool>true</bool>
+            </property>
+            <property name="tristate">
+             <bool>false</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="saverecording">
+            <property name="text">
+             <string>Save report</string>
             </property>
            </widget>
           </item>
@@ -639,6 +743,21 @@ border-thickness: 1px;
 </string>
                 </property>
                 <layout class="QHBoxLayout" name="horizontalLayout_3">
+                 <property name="spacing">
+                  <number>10</number>
+                 </property>
+                 <property name="leftMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="topMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="rightMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="bottomMargin">
+                  <number>0</number>
+                 </property>
                  <item>
                   <layout class="QVBoxLayout" name="verticalLayout_4">
                    <item>
@@ -803,14 +922,14 @@ border-thickness: 1px;
                        </property>
                       </widget>
                      </item>
-                     <item row="4" column="0">
+                     <item row="5" column="0">
                       <widget class="QLabel" name="agelabel_2">
                        <property name="text">
                         <string>Age</string>
                        </property>
                       </widget>
                      </item>
-                     <item row="4" column="1">
+                     <item row="5" column="1">
                       <widget class="QSpinBox" name="ageselect_2">
                        <property name="enabled">
                         <bool>true</bool>
@@ -820,14 +939,14 @@ border-thickness: 1px;
                        </property>
                       </widget>
                      </item>
-                     <item row="5" column="0">
+                     <item row="6" column="0">
                       <widget class="QLabel" name="heightlabel_2">
                        <property name="text">
                         <string>Height</string>
                        </property>
                       </widget>
                      </item>
-                     <item row="5" column="1">
+                     <item row="6" column="1">
                       <widget class="QSpinBox" name="heightselect_2">
                        <property name="enabled">
                         <bool>true</bool>
@@ -840,14 +959,14 @@ border-thickness: 1px;
                        </property>
                       </widget>
                      </item>
-                     <item row="6" column="0">
+                     <item row="7" column="0">
                       <widget class="QLabel" name="weightlabel_2">
                        <property name="text">
                         <string>Weight</string>
                        </property>
                       </widget>
                      </item>
-                     <item row="6" column="1">
+                     <item row="7" column="1">
                       <widget class="QSpinBox" name="weightselect_2">
                        <property name="enabled">
                         <bool>true</bool>
@@ -860,14 +979,14 @@ border-thickness: 1px;
                        </property>
                       </widget>
                      </item>
-                     <item row="9" column="0">
+                     <item row="11" column="0">
                       <widget class="QLabel" name="commentlabel_2">
                        <property name="text">
                         <string>Notes</string>
                        </property>
                       </widget>
                      </item>
-                     <item row="9" column="1">
+                     <item row="11" column="1">
                       <widget class="QPlainTextEdit" name="notesedit_2">
                        <property name="enabled">
                         <bool>true</bool>
@@ -881,7 +1000,7 @@ border-thickness: 1px;
                        <property name="minimumSize">
                         <size>
                          <width>100</width>
-                         <height>100</height>
+                         <height>30</height>
                         </size>
                        </property>
                        <property name="maximumSize">
@@ -892,16 +1011,19 @@ border-thickness: 1px;
                        </property>
                       </widget>
                      </item>
-                     <item row="7" column="0">
+                     <item row="8" column="0">
                       <widget class="QLabel" name="conditionlabel_2">
                        <property name="text">
                         <string>Condition</string>
                        </property>
                       </widget>
                      </item>
-                     <item row="7" column="1">
+                     <item row="8" column="1">
                       <widget class="QComboBox" name="conditionselect_2">
                        <property name="enabled">
+                        <bool>true</bool>
+                       </property>
+                       <property name="editable">
                         <bool>true</bool>
                        </property>
                        <item>
@@ -936,16 +1058,19 @@ border-thickness: 1px;
                        </property>
                       </widget>
                      </item>
-                     <item row="8" column="0">
+                     <item row="9" column="0">
                       <widget class="QLabel" name="medicationlabel_2">
                        <property name="text">
                         <string>Medication</string>
                        </property>
                       </widget>
                      </item>
-                     <item row="8" column="1">
+                     <item row="9" column="1">
                       <widget class="QComboBox" name="medicationselect_2">
                        <property name="enabled">
+                        <bool>true</bool>
+                       </property>
+                       <property name="editable">
                         <bool>true</bool>
                        </property>
                        <item>
@@ -956,6 +1081,57 @@ border-thickness: 1px;
                        <item>
                         <property name="text">
                          <string>Painkillers</string>
+                        </property>
+                       </item>
+                      </widget>
+                     </item>
+                     <item row="4" column="0">
+                      <widget class="QLabel" name="identifierlabel_2">
+                       <property name="text">
+                        <string>Identifier</string>
+                       </property>
+                      </widget>
+                     </item>
+                     <item row="4" column="1">
+                      <layout class="QHBoxLayout" name="horizontalLayout_6">
+                       <item>
+                        <widget class="QLineEdit" name="identifierselect_2"/>
+                       </item>
+                       <item>
+                        <widget class="QPushButton" name="identifierreload_2">
+                         <property name="maximumSize">
+                          <size>
+                           <width>80</width>
+                           <height>16777215</height>
+                          </size>
+                         </property>
+                         <property name="text">
+                          <string>regemerate</string>
+                         </property>
+                        </widget>
+                       </item>
+                      </layout>
+                     </item>
+                     <item row="10" column="0">
+                      <widget class="QLabel" name="fallhistorylabel_2">
+                       <property name="text">
+                        <string>Fall history</string>
+                       </property>
+                      </widget>
+                     </item>
+                     <item row="10" column="1">
+                      <widget class="QComboBox" name="fallhistoryselect_2">
+                       <property name="editable">
+                        <bool>true</bool>
+                       </property>
+                       <item>
+                        <property name="text">
+                         <string>No recent incidents</string>
+                        </property>
+                       </item>
+                       <item>
+                        <property name="text">
+                         <string>Fell in last year</string>
                         </property>
                        </item>
                       </widget>

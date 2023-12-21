@@ -15,11 +15,12 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QFont, QFontDatabase, QGradient, QIcon,
     QImage, QKeySequence, QLinearGradient, QPainter,
     QPalette, QPixmap, QRadialGradient, QTransform)
-from PySide6.QtWidgets import (QApplication, QComboBox, QFormLayout, QFrame,
-    QGridLayout, QHBoxLayout, QHeaderView, QLabel,
-    QMainWindow, QPlainTextEdit, QPushButton, QScrollArea,
-    QSizePolicy, QSlider, QSpinBox, QTabWidget,
-    QTableWidget, QTableWidgetItem, QVBoxLayout, QWidget)
+from PySide6.QtWidgets import (QApplication, QCheckBox, QComboBox, QFormLayout,
+    QFrame, QGridLayout, QHBoxLayout, QHeaderView,
+    QLabel, QLineEdit, QMainWindow, QPlainTextEdit,
+    QPushButton, QScrollArea, QSizePolicy, QSlider,
+    QSpinBox, QTabWidget, QTableWidget, QTableWidgetItem,
+    QVBoxLayout, QWidget)
 
 from widgets import (ApMl, Stabilogram)
 
@@ -107,12 +108,22 @@ class Ui_MainWindow(object):
 
         self.startrecording = QPushButton(self.livetab)
         self.startrecording.setObjectName(u"startrecording")
+        font = QFont()
+        font.setKerning(False)
+        self.startrecording.setFont(font)
+        self.startrecording.setStyleSheet(u"")
 
         self.horizontalLayout.addWidget(self.startrecording)
 
         self.analyserecording = QPushButton(self.livetab)
         self.analyserecording.setObjectName(u"analyserecording")
         self.analyserecording.setMinimumSize(QSize(150, 0))
+        font1 = QFont()
+        font1.setBold(False)
+        font1.setStyleStrategy(QFont.PreferDefault)
+        self.analyserecording.setFont(font1)
+        self.analyserecording.setFocusPolicy(Qt.StrongFocus)
+        self.analyserecording.setContextMenuPolicy(Qt.DefaultContextMenu)
 
         self.horizontalLayout.addWidget(self.analyserecording)
 
@@ -153,7 +164,7 @@ class Ui_MainWindow(object):
         self.formLayout.setFormAlignment(Qt.AlignLeading|Qt.AlignLeft|Qt.AlignTop)
         self.formLayout.setHorizontalSpacing(10)
         self.formLayout.setVerticalSpacing(10)
-        self.formLayout.setContentsMargins(10, 10, 10, 10)
+        self.formLayout.setContentsMargins(0, 0, 0, 0)
         self.stancelabel = QLabel(self.frame)
         self.stancelabel.setObjectName(u"stancelabel")
 
@@ -200,40 +211,40 @@ class Ui_MainWindow(object):
         self.agelabel = QLabel(self.frame)
         self.agelabel.setObjectName(u"agelabel")
 
-        self.formLayout.setWidget(4, QFormLayout.LabelRole, self.agelabel)
+        self.formLayout.setWidget(5, QFormLayout.LabelRole, self.agelabel)
 
         self.ageselect = QSpinBox(self.frame)
         self.ageselect.setObjectName(u"ageselect")
         self.ageselect.setMaximum(130)
 
-        self.formLayout.setWidget(4, QFormLayout.FieldRole, self.ageselect)
+        self.formLayout.setWidget(5, QFormLayout.FieldRole, self.ageselect)
 
         self.heightlabel = QLabel(self.frame)
         self.heightlabel.setObjectName(u"heightlabel")
 
-        self.formLayout.setWidget(5, QFormLayout.LabelRole, self.heightlabel)
+        self.formLayout.setWidget(6, QFormLayout.LabelRole, self.heightlabel)
 
         self.heightselect = QSpinBox(self.frame)
         self.heightselect.setObjectName(u"heightselect")
         self.heightselect.setMaximum(260)
 
-        self.formLayout.setWidget(5, QFormLayout.FieldRole, self.heightselect)
+        self.formLayout.setWidget(6, QFormLayout.FieldRole, self.heightselect)
 
         self.weightlabel = QLabel(self.frame)
         self.weightlabel.setObjectName(u"weightlabel")
 
-        self.formLayout.setWidget(6, QFormLayout.LabelRole, self.weightlabel)
+        self.formLayout.setWidget(7, QFormLayout.LabelRole, self.weightlabel)
 
         self.weightselect = QSpinBox(self.frame)
         self.weightselect.setObjectName(u"weightselect")
         self.weightselect.setMaximum(1000)
 
-        self.formLayout.setWidget(6, QFormLayout.FieldRole, self.weightselect)
+        self.formLayout.setWidget(7, QFormLayout.FieldRole, self.weightselect)
 
         self.commentlabel = QLabel(self.frame)
         self.commentlabel.setObjectName(u"commentlabel")
 
-        self.formLayout.setWidget(9, QFormLayout.LabelRole, self.commentlabel)
+        self.formLayout.setWidget(11, QFormLayout.LabelRole, self.commentlabel)
 
         self.notesedit = QPlainTextEdit(self.frame)
         self.notesedit.setObjectName(u"notesedit")
@@ -242,15 +253,15 @@ class Ui_MainWindow(object):
         sizePolicy6.setVerticalStretch(0)
         sizePolicy6.setHeightForWidth(self.notesedit.sizePolicy().hasHeightForWidth())
         self.notesedit.setSizePolicy(sizePolicy6)
-        self.notesedit.setMinimumSize(QSize(100, 100))
+        self.notesedit.setMinimumSize(QSize(100, 30))
         self.notesedit.setMaximumSize(QSize(16777215, 100))
 
-        self.formLayout.setWidget(9, QFormLayout.FieldRole, self.notesedit)
+        self.formLayout.setWidget(11, QFormLayout.FieldRole, self.notesedit)
 
         self.conditionlabel = QLabel(self.frame)
         self.conditionlabel.setObjectName(u"conditionlabel")
 
-        self.formLayout.setWidget(7, QFormLayout.LabelRole, self.conditionlabel)
+        self.formLayout.setWidget(8, QFormLayout.LabelRole, self.conditionlabel)
 
         self.conditionselect = QComboBox(self.frame)
         self.conditionselect.addItem("")
@@ -259,7 +270,7 @@ class Ui_MainWindow(object):
         self.conditionselect.addItem("")
         self.conditionselect.setObjectName(u"conditionselect")
 
-        self.formLayout.setWidget(7, QFormLayout.FieldRole, self.conditionselect)
+        self.formLayout.setWidget(8, QFormLayout.FieldRole, self.conditionselect)
 
         self.testinfolabel = QLabel(self.frame)
         self.testinfolabel.setObjectName(u"testinfolabel")
@@ -270,14 +281,51 @@ class Ui_MainWindow(object):
         self.medicationlabel = QLabel(self.frame)
         self.medicationlabel.setObjectName(u"medicationlabel")
 
-        self.formLayout.setWidget(8, QFormLayout.LabelRole, self.medicationlabel)
+        self.formLayout.setWidget(9, QFormLayout.LabelRole, self.medicationlabel)
 
         self.medicationselect = QComboBox(self.frame)
         self.medicationselect.addItem("")
         self.medicationselect.addItem("")
         self.medicationselect.setObjectName(u"medicationselect")
+        self.medicationselect.setEditable(True)
 
-        self.formLayout.setWidget(8, QFormLayout.FieldRole, self.medicationselect)
+        self.formLayout.setWidget(9, QFormLayout.FieldRole, self.medicationselect)
+
+        self.fallhistorylabel = QLabel(self.frame)
+        self.fallhistorylabel.setObjectName(u"fallhistorylabel")
+
+        self.formLayout.setWidget(10, QFormLayout.LabelRole, self.fallhistorylabel)
+
+        self.fallhistoryselect = QComboBox(self.frame)
+        self.fallhistoryselect.addItem("")
+        self.fallhistoryselect.addItem("")
+        self.fallhistoryselect.setObjectName(u"fallhistoryselect")
+        self.fallhistoryselect.setEditable(True)
+
+        self.formLayout.setWidget(10, QFormLayout.FieldRole, self.fallhistoryselect)
+
+        self.identifierlabel = QLabel(self.frame)
+        self.identifierlabel.setObjectName(u"identifierlabel")
+
+        self.formLayout.setWidget(4, QFormLayout.LabelRole, self.identifierlabel)
+
+        self.horizontalLayout_5 = QHBoxLayout()
+        self.horizontalLayout_5.setObjectName(u"horizontalLayout_5")
+        self.identifierselect = QLineEdit(self.frame)
+        self.identifierselect.setObjectName(u"identifierselect")
+
+        self.horizontalLayout_5.addWidget(self.identifierselect)
+
+        self.identifierreload = QPushButton(self.frame)
+        self.identifierreload.setObjectName(u"identifierreload")
+        sizePolicy5.setHeightForWidth(self.identifierreload.sizePolicy().hasHeightForWidth())
+        self.identifierreload.setSizePolicy(sizePolicy5)
+        self.identifierreload.setMaximumSize(QSize(80, 16777215))
+
+        self.horizontalLayout_5.addWidget(self.identifierreload)
+
+
+        self.formLayout.setLayout(4, QFormLayout.FieldRole, self.horizontalLayout_5)
 
 
         self.horizontalLayout_2.addLayout(self.formLayout)
@@ -324,6 +372,13 @@ class Ui_MainWindow(object):
 
         self.analysistoolbar.addWidget(self.analysisopenfile)
 
+        self.line_3 = QFrame(self.analysistab)
+        self.line_3.setObjectName(u"line_3")
+        self.line_3.setFrameShape(QFrame.VLine)
+        self.line_3.setFrameShadow(QFrame.Sunken)
+
+        self.analysistoolbar.addWidget(self.line_3)
+
         self.analysisplay = QPushButton(self.analysistab)
         self.analysisplay.setObjectName(u"analysisplay")
 
@@ -354,15 +409,25 @@ class Ui_MainWindow(object):
 
         self.analysistoolbar.addWidget(self.analysisrestart)
 
+        self.line_4 = QFrame(self.analysistab)
+        self.line_4.setObjectName(u"line_4")
+        self.line_4.setFrameShape(QFrame.VLine)
+        self.line_4.setFrameShadow(QFrame.Sunken)
+
+        self.analysistoolbar.addWidget(self.line_4)
+
+        self.contribute = QCheckBox(self.analysistab)
+        self.contribute.setObjectName(u"contribute")
+        self.contribute.setLayoutDirection(Qt.RightToLeft)
+        self.contribute.setChecked(True)
+        self.contribute.setTristate(False)
+
+        self.analysistoolbar.addWidget(self.contribute)
+
         self.saverecording = QPushButton(self.analysistab)
         self.saverecording.setObjectName(u"saverecording")
 
         self.analysistoolbar.addWidget(self.saverecording)
-
-        self.viewselection = QPushButton(self.analysistab)
-        self.viewselection.setObjectName(u"viewselection")
-
-        self.analysistoolbar.addWidget(self.viewselection)
 
 
         self.verticalLayout_2.addLayout(self.analysistoolbar)
@@ -384,7 +449,9 @@ class Ui_MainWindow(object):
 "border-thickness: 1px;\n"
 "")
         self.horizontalLayout_3 = QHBoxLayout(self.widget_2)
+        self.horizontalLayout_3.setSpacing(10)
         self.horizontalLayout_3.setObjectName(u"horizontalLayout_3")
+        self.horizontalLayout_3.setContentsMargins(0, 0, 0, 0)
         self.verticalLayout_4 = QVBoxLayout()
         self.verticalLayout_4.setObjectName(u"verticalLayout_4")
         self.analysisstabilogramwidget = Stabilogram(self.widget_2)
@@ -464,58 +531,58 @@ class Ui_MainWindow(object):
         self.agelabel_2 = QLabel(self.widget_2)
         self.agelabel_2.setObjectName(u"agelabel_2")
 
-        self.formLayout_2.setWidget(4, QFormLayout.LabelRole, self.agelabel_2)
+        self.formLayout_2.setWidget(5, QFormLayout.LabelRole, self.agelabel_2)
 
         self.ageselect_2 = QSpinBox(self.widget_2)
         self.ageselect_2.setObjectName(u"ageselect_2")
         self.ageselect_2.setEnabled(True)
         self.ageselect_2.setMaximum(130)
 
-        self.formLayout_2.setWidget(4, QFormLayout.FieldRole, self.ageselect_2)
+        self.formLayout_2.setWidget(5, QFormLayout.FieldRole, self.ageselect_2)
 
         self.heightlabel_2 = QLabel(self.widget_2)
         self.heightlabel_2.setObjectName(u"heightlabel_2")
 
-        self.formLayout_2.setWidget(5, QFormLayout.LabelRole, self.heightlabel_2)
+        self.formLayout_2.setWidget(6, QFormLayout.LabelRole, self.heightlabel_2)
 
         self.heightselect_2 = QSpinBox(self.widget_2)
         self.heightselect_2.setObjectName(u"heightselect_2")
         self.heightselect_2.setEnabled(True)
         self.heightselect_2.setMaximum(260)
 
-        self.formLayout_2.setWidget(5, QFormLayout.FieldRole, self.heightselect_2)
+        self.formLayout_2.setWidget(6, QFormLayout.FieldRole, self.heightselect_2)
 
         self.weightlabel_2 = QLabel(self.widget_2)
         self.weightlabel_2.setObjectName(u"weightlabel_2")
 
-        self.formLayout_2.setWidget(6, QFormLayout.LabelRole, self.weightlabel_2)
+        self.formLayout_2.setWidget(7, QFormLayout.LabelRole, self.weightlabel_2)
 
         self.weightselect_2 = QSpinBox(self.widget_2)
         self.weightselect_2.setObjectName(u"weightselect_2")
         self.weightselect_2.setEnabled(True)
         self.weightselect_2.setMaximum(1000)
 
-        self.formLayout_2.setWidget(6, QFormLayout.FieldRole, self.weightselect_2)
+        self.formLayout_2.setWidget(7, QFormLayout.FieldRole, self.weightselect_2)
 
         self.commentlabel_2 = QLabel(self.widget_2)
         self.commentlabel_2.setObjectName(u"commentlabel_2")
 
-        self.formLayout_2.setWidget(9, QFormLayout.LabelRole, self.commentlabel_2)
+        self.formLayout_2.setWidget(11, QFormLayout.LabelRole, self.commentlabel_2)
 
         self.notesedit_2 = QPlainTextEdit(self.widget_2)
         self.notesedit_2.setObjectName(u"notesedit_2")
         self.notesedit_2.setEnabled(True)
         sizePolicy6.setHeightForWidth(self.notesedit_2.sizePolicy().hasHeightForWidth())
         self.notesedit_2.setSizePolicy(sizePolicy6)
-        self.notesedit_2.setMinimumSize(QSize(100, 100))
+        self.notesedit_2.setMinimumSize(QSize(100, 30))
         self.notesedit_2.setMaximumSize(QSize(16777215, 100))
 
-        self.formLayout_2.setWidget(9, QFormLayout.FieldRole, self.notesedit_2)
+        self.formLayout_2.setWidget(11, QFormLayout.FieldRole, self.notesedit_2)
 
         self.conditionlabel_2 = QLabel(self.widget_2)
         self.conditionlabel_2.setObjectName(u"conditionlabel_2")
 
-        self.formLayout_2.setWidget(7, QFormLayout.LabelRole, self.conditionlabel_2)
+        self.formLayout_2.setWidget(8, QFormLayout.LabelRole, self.conditionlabel_2)
 
         self.conditionselect_2 = QComboBox(self.widget_2)
         self.conditionselect_2.addItem("")
@@ -524,8 +591,9 @@ class Ui_MainWindow(object):
         self.conditionselect_2.addItem("")
         self.conditionselect_2.setObjectName(u"conditionselect_2")
         self.conditionselect_2.setEnabled(True)
+        self.conditionselect_2.setEditable(True)
 
-        self.formLayout_2.setWidget(7, QFormLayout.FieldRole, self.conditionselect_2)
+        self.formLayout_2.setWidget(8, QFormLayout.FieldRole, self.conditionselect_2)
 
         self.testinfolabel_2 = QLabel(self.widget_2)
         self.testinfolabel_2.setObjectName(u"testinfolabel_2")
@@ -536,15 +604,50 @@ class Ui_MainWindow(object):
         self.medicationlabel_2 = QLabel(self.widget_2)
         self.medicationlabel_2.setObjectName(u"medicationlabel_2")
 
-        self.formLayout_2.setWidget(8, QFormLayout.LabelRole, self.medicationlabel_2)
+        self.formLayout_2.setWidget(9, QFormLayout.LabelRole, self.medicationlabel_2)
 
         self.medicationselect_2 = QComboBox(self.widget_2)
         self.medicationselect_2.addItem("")
         self.medicationselect_2.addItem("")
         self.medicationselect_2.setObjectName(u"medicationselect_2")
         self.medicationselect_2.setEnabled(True)
+        self.medicationselect_2.setEditable(True)
 
-        self.formLayout_2.setWidget(8, QFormLayout.FieldRole, self.medicationselect_2)
+        self.formLayout_2.setWidget(9, QFormLayout.FieldRole, self.medicationselect_2)
+
+        self.identifierlabel_2 = QLabel(self.widget_2)
+        self.identifierlabel_2.setObjectName(u"identifierlabel_2")
+
+        self.formLayout_2.setWidget(4, QFormLayout.LabelRole, self.identifierlabel_2)
+
+        self.horizontalLayout_6 = QHBoxLayout()
+        self.horizontalLayout_6.setObjectName(u"horizontalLayout_6")
+        self.identifierselect_2 = QLineEdit(self.widget_2)
+        self.identifierselect_2.setObjectName(u"identifierselect_2")
+
+        self.horizontalLayout_6.addWidget(self.identifierselect_2)
+
+        self.identifierreload_2 = QPushButton(self.widget_2)
+        self.identifierreload_2.setObjectName(u"identifierreload_2")
+        self.identifierreload_2.setMaximumSize(QSize(80, 16777215))
+
+        self.horizontalLayout_6.addWidget(self.identifierreload_2)
+
+
+        self.formLayout_2.setLayout(4, QFormLayout.FieldRole, self.horizontalLayout_6)
+
+        self.fallhistorylabel_2 = QLabel(self.widget_2)
+        self.fallhistorylabel_2.setObjectName(u"fallhistorylabel_2")
+
+        self.formLayout_2.setWidget(10, QFormLayout.LabelRole, self.fallhistorylabel_2)
+
+        self.fallhistoryselect_2 = QComboBox(self.widget_2)
+        self.fallhistoryselect_2.addItem("")
+        self.fallhistoryselect_2.addItem("")
+        self.fallhistoryselect_2.setObjectName(u"fallhistoryselect_2")
+        self.fallhistoryselect_2.setEditable(True)
+
+        self.formLayout_2.setWidget(10, QFormLayout.FieldRole, self.fallhistoryselect_2)
 
 
         self.verticalLayout_6.addLayout(self.formLayout_2)
@@ -648,14 +751,20 @@ class Ui_MainWindow(object):
         self.medicationselect.setItemText(0, "")
         self.medicationselect.setItemText(1, QCoreApplication.translate("MainWindow", u"Painkillers", None))
 
+        self.fallhistorylabel.setText(QCoreApplication.translate("MainWindow", u"Fall history", None))
+        self.fallhistoryselect.setItemText(0, QCoreApplication.translate("MainWindow", u"No recent incidents", None))
+        self.fallhistoryselect.setItemText(1, QCoreApplication.translate("MainWindow", u"Fell in last year", None))
+
+        self.identifierlabel.setText(QCoreApplication.translate("MainWindow", u"Identifier", None))
+        self.identifierreload.setText(QCoreApplication.translate("MainWindow", u"regenerate", None))
         self.modes.setTabText(self.modes.indexOf(self.livetab), QCoreApplication.translate("MainWindow", u"Live", None))
         self.analysisopenfile.setText(QCoreApplication.translate("MainWindow", u"Open", None))
         self.analysisplay.setText(QCoreApplication.translate("MainWindow", u"\u23ef\ufe0f", None))
         self.currenttime.setText(QCoreApplication.translate("MainWindow", u"--", None))
         self.maxtime.setText(QCoreApplication.translate("MainWindow", u"--", None))
         self.analysisrestart.setText(QCoreApplication.translate("MainWindow", u"Restart", None))
+        self.contribute.setText(QCoreApplication.translate("MainWindow", u"Contribute to reseach?", None))
         self.saverecording.setText(QCoreApplication.translate("MainWindow", u"Save report", None))
-        self.viewselection.setText(QCoreApplication.translate("MainWindow", u"Views", None))
         self.stancelabel_2.setText(QCoreApplication.translate("MainWindow", u"Stance", None))
         self.stanceselect_2.setItemText(0, "")
         self.stanceselect_2.setItemText(1, QCoreApplication.translate("MainWindow", u"double legged", None))
@@ -687,6 +796,12 @@ class Ui_MainWindow(object):
         self.medicationlabel_2.setText(QCoreApplication.translate("MainWindow", u"Medication", None))
         self.medicationselect_2.setItemText(0, "")
         self.medicationselect_2.setItemText(1, QCoreApplication.translate("MainWindow", u"Painkillers", None))
+
+        self.identifierlabel_2.setText(QCoreApplication.translate("MainWindow", u"Identifier", None))
+        self.identifierreload_2.setText(QCoreApplication.translate("MainWindow", u"regemerate", None))
+        self.fallhistorylabel_2.setText(QCoreApplication.translate("MainWindow", u"Fall history", None))
+        self.fallhistoryselect_2.setItemText(0, QCoreApplication.translate("MainWindow", u"No recent incidents", None))
+        self.fallhistoryselect_2.setItemText(1, QCoreApplication.translate("MainWindow", u"Fell in last year", None))
 
         self.modes.setTabText(self.modes.indexOf(self.analysistab), QCoreApplication.translate("MainWindow", u"Analysis", None))
     # retranslateUi
