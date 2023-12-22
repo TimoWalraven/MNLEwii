@@ -1,6 +1,4 @@
-
 from PySide6.QtWidgets import QWidget, QVBoxLayout
-import EntropyHub as EH
 import pyqtgraph as pg
 
 
@@ -25,7 +23,6 @@ class Stabilogram(QWidget):
         self.graph.setLabel('right', 'AP', units='mm')
         self.graph.setLabel('bottom', 'ML', units='mm')
         self.graph.setAspectLocked(True, 1)
-        # self.graph.setMouseEnabled(x=False, y=False)
         self.graph.hideButtons()
 
 

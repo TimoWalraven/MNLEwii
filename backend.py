@@ -1,6 +1,6 @@
 import sys
 from PySide6.QtWidgets import QApplication, QMainWindow, QFileDialog
-from PySide6.QtCore import QTimer, Qt
+from PySide6.QtCore import QTimer
 from PySide6.QtGui import QShortcut, QKeySequence
 from threading import Thread
 import serial
@@ -11,8 +11,6 @@ import numpy as np
 # Custom imports
 import frontend
 from code_descriptors_postural_control.stabilogram.stato import Stabilogram
-from code_descriptors_postural_control.descriptors import compute_all_features
-
 
 class STEPviewer:
 
@@ -83,13 +81,13 @@ class STEPviewer:
         self.recordstate = False
 
         if dummy:
-            self.dummyrec = np.genfromtxt('dummyrec.csv', delimiter=' ')[1:]
+            self.dummyrec = np.genfromtxt('QtDesigner/dummyrec.csv', delimiter=' ')[1:]
             self.livex = [i[1] for i in self.dummyrec]
             self.livey = [i[2] for i in self.dummyrec]
             self.recording = self.dummyrec
             self.recordinginfo = {
-                "date": datetime.datetime.now().date(),
-                "time": datetime.datetime.now().time(),
+                "date": datetime.datetime.now().strftime("%d/%m/%Y"),
+                "time": datetime.datetime.now().strftime("%H:%M:%S"),
                 "duration": "10 s",
                 "stance": "double legged",
                 "eyes": "open",
@@ -206,14 +204,14 @@ class STEPviewer:
                             self.ui.statustext.setText(f"connected")
                             self.display = True
                             line = ''
-                            while self.com_port_selected == self.ui.comport.currentText():
+                            while self.com_port_selected == self.ui.comport.currentText() and self.mode == 0:
                                 incoming = ser.readline().decode()
                                 if incoming and incoming != '':
                                     line += incoming[1:-2]
                                     self.livex.append(float(line.split(', ')[0]))
                                     self.livey.append(float(line.split(', ')[1]))
                                     line = ''
-                                    if len(self.livex) > 100:
+                                    if len(self.livex) > 50:
                                         self.livex.pop(0)
                                         self.livey.pop(0)
                                 else:
@@ -226,8 +224,8 @@ class STEPviewer:
                         sleep(1)
                 else:
                     sleep(1)
-                print("Serial port closed, trying to reconnect...")
-            sleep(1)
+            else:
+                sleep(1)
 
     def update(self):
         # Live mode
@@ -386,14 +384,46 @@ class STEPviewer:
                 return
 
     def openrecording(self):
-        # ToDo: add option to resample when loading file
-        # open file with Qt
         options = QFileDialog.Options()
         options |= QFileDialog.ReadOnly
-        fileName, _ = QFileDialog.getOpenFileName(self.win, 'Open CSV File', '', 'CSV Files (*.csv);;All Files (*)',
-                                                  options=options)
+        fileName, _ = QFileDialog.getOpenFileName(self.win, 'Open recording', '', 'Report or raw data (*.xlsx *.json)', options=options)
+        if fileName == '':
+            print("No file selected.")
+            return
+
+        extention = fileName.split('.')[-1]
+        if extention == 'xlsx':
+            try:
+                import pandas as pd
+                data = pd.read_excel(fileName, sheet_name='Data')
+                metadata = pd.read_excel(fileName, sheet_name='Metadata')
+                self.recording = data.to_numpy()
+                self.recordinginfo = {k: str(v[0]) for k, v in metadata.to_dict().items()}
+                self.readpatientinfo()
+            except Exception as e:
+                print(f"Error while opening file: {e}")
+                return
+
+        elif extention == 'json':
+            try:
+                import pandas as pd
+                data = pd.read_json(fileName, orient='records', typ='series')
+                metadata = data['metadata']
+                self.recordinginfo = self.recordinginfo | metadata
+                data = data['data']
+                # generate numpy array from json
+                data = np.array([list(i.values()) for i in data])
+                self.recording = data
+                self.readpatientinfo()
+            except Exception as e:
+                print(f"Error while opening file: {e}")
+                return
+        else:
+            print("Unknown file extention.")
+            return
+
         try:
-            self.analysisdata = np.genfromtxt(fileName, delimiter=' ')[1:]
+            self.analyserecording()
             self.analysisidx = 0
             self.update()
             self.ui.analysisplay.setDisabled(False)
@@ -441,12 +471,12 @@ class STEPviewer:
             self.recordstate = False
             print("Done recording")
             self.recording = np.column_stack((times, xs, ys))
-            self.recordinginfo = {"date": start_time.date(),
-                                  "time": start_time.time(),
+            self.recordinginfo = {"date": start_time.strftime("%d/%m/%Y"),
+                                  "time": start_time.strftime("%H:%M:%S"),
                                   "duration": self.ui.recordlength.value(),
                                   "stance": self.ui.stanceselect.currentText(),
                                   "eyes": self.ui.eyeselect.currentText(),
-                                  "identifier": self.ui.identifierselect.currentText(),
+                                  "identifier": self.ui.identifierselect.text(),
                                   "age": self.ui.ageselect.value(),
                                   "height": self.ui.heightselect.value(),
                                   "weight": self.ui.weightselect.value(),
@@ -558,8 +588,19 @@ class STEPviewer:
         self.ui.modes.setCurrentIndex(1)
 
         # recording info
-        # TODO: add hash from recording as unique identifier
-        self.updatepatientinfo()
+        self.recordinginfo['duration'] = f"{self.analysisdata[-1][0]:.2f} s"
+        self.recordinginfo['stance'] = self.ui.stanceselect.currentText()
+        self.recordinginfo['eyes'] = self.ui.eyeselect.currentText()
+        self.recordinginfo['identifier'] = self.ui.identifierselect.text()
+        self.recordinginfo['age'] = self.ui.ageselect.value()
+        self.recordinginfo['height'] = self.ui.heightselect.value()
+        self.recordinginfo['weight'] = self.ui.weightselect.value()
+        self.recordinginfo['condition'] = self.ui.conditionselect.currentText()
+        self.recordinginfo['medication'] = self.ui.medicationselect.currentText()
+        self.recordinginfo['fallhistory'] = self.ui.fallhistoryselect.currentText()
+        self.recordinginfo['notes'] = self.ui.notesedit.toPlainText()
+
+        self.readpatientinfo()
 
         """# Table view
         features = compute_all_features(stato)
@@ -575,53 +616,49 @@ class STEPviewer:
 
         pass
 
-    def updatepatientinfo(self, info=None):
-
-        if not info:
-            self.ui.testinfolabel_2.setText(
-                f"Test info | {datetime.datetime.now().strftime('%d-%m-%y')} | {datetime.datetime.now().strftime('%H:%M:%S')}")
-            self.ui.maxtime.setText(f"{np.max(self.recording[:, 0]):.2f} s")
-            self.ui.stanceselect_2.setCurrentText(self.ui.stanceselect.currentText())
-            self.ui.identifierselect_2.setText(self.ui.identifierselect.text())
-            self.ui.eyeselect_2.setCurrentText(self.ui.eyeselect.currentText())
-            self.ui.ageselect_2.setValue(self.ui.ageselect.value())
-            self.ui.heightselect_2.setValue(self.ui.heightselect.value())
-            self.ui.weightselect_2.setValue(self.ui.weightselect.value())
-            self.ui.conditionselect_2.setCurrentText(self.ui.conditionselect.currentText())
-            self.ui.medicationselect_2.setCurrentText(self.ui.medicationselect.currentText())
-            self.ui.fallhistoryselect_2.setCurrentText(self.ui.fallhistoryselect.currentText())
-            self.ui.notesedit_2.setPlainText(self.ui.notesedit.toPlainText())
-
-        elif isinstance(info, dict):
-            try:
-                self.ui.testinfolabel_2.setText(f"Test info | {info['date']} | {info['time']}")
-                self.ui.maxtime.setText(f"{info['duration']} s")
-                self.ui.stanceselect_2.setCurrentText(info['stance'])
-                self.ui.eyeselect_2.setCurrentText(info['eyes'])
-                self.ui.identifierselect_2.setText(info['identifier'])
-                self.ui.ageselect_2.setValue(info['age'])
-                self.ui.heightselect_2.setValue(info['height'])
-                self.ui.weightselect_2.setValue(info['weight'])
-                self.ui.conditionselect_2.setCurrentText(info['condition'])
-                self.ui.medicationselect_2.setCurrentText(info['medication'])
-                self.ui.fallhistoryselect_2.setCurrentText(info['fallhistory'])
-                self.ui.notesedit_2.setPlainText(info['notes'])
-            except Exception as e:
-                print(f"Error while updating patient info: {e}")
-
-        else:
-            print("info format unsupported.")
-
-        pass
-
+    def readpatientinfo(self):
+        try:
+            #live mode
+            self.ui.stanceselect.setCurrentText(self.recordinginfo['stance'])
+            self.ui.eyeselect.setCurrentText(self.recordinginfo['eyes'])
+            self.ui.identifierselect.setText(self.recordinginfo['identifier'])
+            self.ui.ageselect.setValue(int(self.recordinginfo['age']))
+            self.ui.heightselect.setValue(int(self.recordinginfo['height']))
+            self.ui.weightselect.setValue(int(self.recordinginfo['weight']))
+            self.ui.conditionselect.setCurrentText(self.recordinginfo['condition'])
+            self.ui.medicationselect.setCurrentText(self.recordinginfo['medication'])
+            self.ui.fallhistoryselect.setCurrentText(self.recordinginfo['fallhistory'])
+            self.ui.notesedit.setPlainText(self.recordinginfo['notes'])
+            #analysis mode
+            self.ui.testinfolabel_2.setText(f"Test Info | {self.recordinginfo['date']} | {self.recordinginfo['time']}")
+            self.ui.stanceselect_2.setCurrentText(self.recordinginfo['stance'])
+            self.ui.eyeselect_2.setCurrentText(self.recordinginfo['eyes'])
+            self.ui.identifierselect_2.setText(self.recordinginfo['identifier'])
+            self.ui.ageselect_2.setValue(int(self.recordinginfo['age']))
+            self.ui.heightselect_2.setValue(int(self.recordinginfo['height']))
+            self.ui.weightselect_2.setValue(int(self.recordinginfo['weight']))
+            self.ui.conditionselect_2.setCurrentText(self.recordinginfo['condition'])
+            self.ui.medicationselect_2.setCurrentText(self.recordinginfo['medication'])
+            self.ui.fallhistoryselect_2.setCurrentText(self.recordinginfo['fallhistory'])
+            self.ui.notesedit_2.setPlainText(self.recordinginfo['notes'])
+        except Exception as e:
+            print(f"Error while reading patient info: {e}")
+            return
 
     def randompatient(self):
-        import random
-        import string
-        self.recordinginfo['identifier'] = ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(10))
-        self.updatepatientinfo(self.recordinginfo)
+        try:
+            import random
+            import string
+            identifier = ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(10))
+            print(f"Generated random identifier: {identifier}")
+            self.recordinginfo['identifier'] = identifier
+            self.ui.identifierselect.setText(identifier)
+            self.ui.identifierselect_2.setText(identifier)
+        except Exception as e:
+            print(f"Error while generating random identifier: {e}")
+            return
 
 if __name__ == '__main__':
-    plot = STEPviewer(dummy=True)
+    plot = STEPviewer(dummy=False)
 
 
