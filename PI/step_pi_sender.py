@@ -22,7 +22,12 @@ def get_board_device() -> Optional[evdev.InputDevice]:
 
 
 def get_raw_measurement(device: evdev.InputDevice):
-    """Read one measurement from the board."""
+    """
+    Read one measurement from the board.
+    Code is based on:
+    https://github.com/jmahmood/bbev/tree/main
+    https://pypi.org/project/weii/0.1.1/
+    """
     data = [None] * 4
     length = 228
     width = 433
@@ -51,7 +56,6 @@ def get_raw_measurement(device: evdev.InputDevice):
         elif event.code == ecodes.SYN_REPORT and event.value == 3:
             pass
         elif event.code == ecodes.SYN_REPORT and event.value == 0:
-            # TODO: optimise cpu usage when no event is received
             if None in data:
                 if tries == 0:
                     time.sleep(1)
