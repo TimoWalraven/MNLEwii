@@ -37,14 +37,15 @@ class STEPviewer:
                 "username": config['RESEARCHDRIVE']['username'],
                 "password": config['RESEARCHDRIVE']['password']
             }
-            print(self.config)
         except Exception as e:
+            print(f"Error while reading config file: {e}")
             self.config = {
                 "practitioner": "unknown",
                 "url": None,
                 "username": None,
                 "password": None
             }
+
         self.ui.modes.currentChanged.connect(self.switchmode)
         self.mode = self.ui.modes.currentIndex()
 
@@ -226,9 +227,9 @@ class STEPviewer:
                 else:
                     sleep(1)
                 print("Serial port closed, trying to reconnect...")
+            sleep(1)
 
     def update(self):
-
         # Live mode
         # TODO: add correct time to live plot
         if self.mode == 0:
@@ -269,12 +270,76 @@ class STEPviewer:
         QApplication.processEvents()
 
     def saverecording(self):
+
+        def sendtoresearchdrive(data, metadata):
+
+            print(f"Checking credentials...")
+            if None in (self.config['url'], self.config['username'], self.config['password']):
+                print("No url, username or password found: please enter your credentials in the config file.")
+            # send options request to check if url and credentials are correct
+            url = self.config['url']
+            username = self.config['username']
+            password = self.config['password']
+            try:
+                import requests
+                response = requests.request("OPTIONS", url, auth=(username, password))
+                if response.status_code != 200:
+                    print(f"Error while checking credentials: {response.status_code}")
+                    print(response.text)
+                    return
+                elif response.status_code == 200:
+                    print(f"Credentials verified.")
+            except Exception as e:
+                print(f"Error while checking credentials: {e}")
+                return
+
+            # TODO: check if user can write
+
+            print(f"Converting data to json...")
+            data_json = data.to_json(orient='records')
+            metadata_json = dict(metadata.iloc[0])
+            import json
+            metadata_json = json.dumps(metadata_json)
+            combined_json = f'{{"metadata": {metadata_json}, "data": {data_json}}}'
+            print(f"Generating filename...")
+            import os, hashlib
+            filename = hashlib.sha256(metadata_json.encode()).hexdigest()
+            filepath = os.path.join(os.getcwd(), f'{filename}.json')
+            # save temporary file locally
+            try:
+                print(f"Saving temp file locally...")
+                with open(filepath, 'w') as f:
+                    f.write(combined_json)
+                    print(f"File saved locally.")
+            except Exception as e:
+                print(f"Error while saving temporary file: {e}")
+                return
+            # upload file to research drive
+            command = f'curl -T {filepath} -u "{username}:{password}" {url}{filename}'
+            try:
+                print("Uploading file to research drive..")
+                import subprocess
+                subprocess.run(command, shell=False)
+                print("File uploaded successfully.")
+            except Exception as e:
+                print(f"Error while uploading file: {e}")
+                return
+            # delete temporary file
+            try:
+                print("Deleting temporary file...")
+                os.remove(filepath)
+                print("Temporary file deleted.")
+            except Exception as e:
+                print(f"Error while deleting temporary file: {e}")
+                return
+
         if len(self.recording) < 1:
             print("No recording found.")
             return
         elif self.recordstate:
             print("Recording in progress, please wait for recording to finish.")
             return
+
         filename = QFileDialog.getSaveFileName(self.win, 'Save File', '', 'Excel Files (*.xlsx)')
         import pandas as pd
         data_df = pd.DataFrame(self.recording, columns=['time', 'x', 'y'])
@@ -313,8 +378,9 @@ class STEPviewer:
         if succes:
             try:
                 if self.ui.contribute.isChecked():
-                    self.sendtoresearchdrive(filename[0])
-                    print("File successfully saved on ResearchDrive.")
+                    sendthread = Thread(target=sendtoresearchdrive, args=(data_df, metadata_df))
+                    sendthread.daemon = True
+                    sendthread.start()
             except Exception as e:
                 print(f"Error while uploading file: {e}")
                 return
@@ -402,7 +468,6 @@ class STEPviewer:
             recordthread = Thread(target=record, args=(self.ui.recordlength.value(),))
             recordthread.daemon = True
             recordthread.start()
-            # check if recording was successful
 
         else:
             print("Unknown error occurred.")
@@ -422,7 +487,6 @@ class STEPviewer:
         self.update()
 
     def slider_changed(self):
-        # TODO: graphs do not update when slider is moved
         self.start_time = datetime.datetime.now() - datetime.timedelta(
             seconds=self.analysisdata[self.ui.timeslider.value() - 1][0])
         self.ui.currenttime.setText(f'{self.analysisdata[self.ui.timeslider.value()][0]:.2f} s')
@@ -550,23 +614,6 @@ class STEPviewer:
 
         pass
 
-    def sendtoresearchdrive(self, filepath: str):
-        if None in (self.config['url'], self.config['username'], self.config['password']):
-            print("No url, username or password found: please enter your credentials in the config file.")
-        else:
-            print("Uploading file to research drive..")
-            import subprocess
-            url = self.config['url']
-            username = self.config['username']
-            password = self.config['password']
-            filename = filepath.split('/')[-1]
-            command = f'curl -T {filepath} -u "{username}:{password}" {url}{filename}'
-            try:
-                subprocess.run(command, shell=False)
-                print("File uploaded successfully.")
-            except Exception as e:
-                print(f"Error while uploading file: {e}")
-            pass
 
     def randompatient(self):
         import random
