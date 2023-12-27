@@ -115,8 +115,8 @@ class STEPviewer:
         self.ui.identifierreload.clicked.connect(self.randompatient)
 
         # Plots
-        self.ui.liveapwidget.setmode('AP')
-        self.ui.livemlwidget.setmode('ML')
+        self.ui.liveapwidget.setmode('AP', live=True)
+        self.ui.livemlwidget.setmode('ML', live=True)
 
         # Analysis mode setup
         # shortcuts
@@ -620,6 +620,7 @@ class STEPviewer:
         # TODO: recording needs to be >= 11 seconds for this to work without errors
         # TODO: convert to function
         features = compute_all_features(stato)
+        print(features)
 
         #compute entropy
         print("Computing entropy...")
@@ -651,7 +652,7 @@ class STEPviewer:
         self.ui.mlvariables.setHorizontalHeaderLabels(['Feature', 'Value', 'Reference', 'Unit'])
         for i, (key, value) in enumerate(variables.items()):
             self.ui.mlvariables.setItem(i, 0, QTableWidgetItem(value[0]))
-            self.ui.mlvariables.setItem(i, 1, QTableWidgetItem(str(features[f'{key}AP'].round(2))))
+            self.ui.mlvariables.setItem(i, 1, QTableWidgetItem(str(features[f'{key}ML'].round(2))))
             self.ui.mlvariables.setItem(i, 2, QTableWidgetItem('unknown'))
             self.ui.mlvariables.setItem(i, 3, QTableWidgetItem(value[1]))
 

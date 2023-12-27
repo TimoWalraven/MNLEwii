@@ -19,6 +19,10 @@
   <property name="windowTitle">
    <string>STEP</string>
   </property>
+  <property name="windowIcon">
+   <iconset>
+    <normaloff>../../../../Stichting Hogeschool Utrecht/Wii balance board - General/Pictures/STEP-icon.png</normaloff>../../../../Stichting Hogeschool Utrecht/Wii balance board - General/Pictures/STEP-icon.png</iconset>
+  </property>
   <property name="iconSize">
    <size>
     <width>50</width>
@@ -42,7 +46,7 @@
        <string notr="true"/>
       </property>
       <property name="currentIndex">
-       <number>0</number>
+       <number>1</number>
       </property>
       <widget class="QWidget" name="livetab">
        <property name="sizePolicy">
@@ -132,7 +136,7 @@ border-radius: 10px; </string>
              <string> s</string>
             </property>
             <property name="minimum">
-             <number>1</number>
+             <number>11</number>
             </property>
             <property name="maximum">
              <number>120</number>
@@ -714,6 +718,12 @@ border-radius: 10px; </string>
         </item>
         <item>
          <widget class="QScrollArea" name="analysisscrollarea">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
           <property name="horizontalScrollBarPolicy">
            <enum>Qt::ScrollBarAlwaysOff</enum>
           </property>
@@ -766,7 +776,7 @@ border-thickness: 1px;
                    <item>
                     <widget class="Stabilogram" name="analysisstabilogramwidget" native="true">
                      <property name="sizePolicy">
-                      <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                      <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
                        <horstretch>0</horstretch>
                        <verstretch>0</verstretch>
                       </sizepolicy>
@@ -788,7 +798,7 @@ border-thickness: 1px;
                       </sizepolicy>
                      </property>
                      <property name="sizeAdjustPolicy">
-                      <enum>QAbstractScrollArea::AdjustToContents</enum>
+                      <enum>QAbstractScrollArea::AdjustToContentsOnFirstShow</enum>
                      </property>
                      <attribute name="horizontalHeaderStretchLastSection">
                       <bool>true</bool>
@@ -1155,19 +1165,6 @@ border-thickness: 1px;
                      <item row="0" column="1">
                       <layout class="QVBoxLayout" name="verticalLayout_7">
                        <item>
-                        <spacer name="verticalSpacer">
-                         <property name="orientation">
-                          <enum>Qt::Vertical</enum>
-                         </property>
-                         <property name="sizeHint" stdset="0">
-                          <size>
-                           <width>20</width>
-                           <height>40</height>
-                          </size>
-                         </property>
-                        </spacer>
-                       </item>
-                       <item>
                         <widget class="QTableWidget" name="apvariables">
                          <property name="sizePolicy">
                           <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
@@ -1181,41 +1178,21 @@ border-thickness: 1px;
                            <height>0</height>
                           </size>
                          </property>
+                         <property name="verticalScrollBarPolicy">
+                          <enum>Qt::ScrollBarAlwaysOff</enum>
+                         </property>
+                         <property name="horizontalScrollBarPolicy">
+                          <enum>Qt::ScrollBarAlwaysOff</enum>
+                         </property>
                          <property name="sizeAdjustPolicy">
                           <enum>QAbstractScrollArea::AdjustToContents</enum>
                          </property>
                         </widget>
                        </item>
-                       <item>
-                        <spacer name="verticalSpacer_2">
-                         <property name="orientation">
-                          <enum>Qt::Vertical</enum>
-                         </property>
-                         <property name="sizeHint" stdset="0">
-                          <size>
-                           <width>20</width>
-                           <height>40</height>
-                          </size>
-                         </property>
-                        </spacer>
-                       </item>
                       </layout>
                      </item>
                      <item row="1" column="1">
                       <layout class="QVBoxLayout" name="verticalLayout_8">
-                       <item>
-                        <spacer name="verticalSpacer_3">
-                         <property name="orientation">
-                          <enum>Qt::Vertical</enum>
-                         </property>
-                         <property name="sizeHint" stdset="0">
-                          <size>
-                           <width>20</width>
-                           <height>40</height>
-                          </size>
-                         </property>
-                        </spacer>
-                       </item>
                        <item>
                         <widget class="QTableWidget" name="mlvariables">
                          <property name="sizePolicy">
@@ -1230,42 +1207,44 @@ border-thickness: 1px;
                            <height>0</height>
                           </size>
                          </property>
+                         <property name="horizontalScrollBarPolicy">
+                          <enum>Qt::ScrollBarAsNeeded</enum>
+                         </property>
                          <property name="sizeAdjustPolicy">
                           <enum>QAbstractScrollArea::AdjustToContents</enum>
                          </property>
                         </widget>
                        </item>
-                       <item>
-                        <spacer name="verticalSpacer_4">
-                         <property name="orientation">
-                          <enum>Qt::Vertical</enum>
-                         </property>
-                         <property name="sizeHint" stdset="0">
-                          <size>
-                           <width>20</width>
-                           <height>40</height>
-                          </size>
-                         </property>
-                        </spacer>
-                       </item>
                       </layout>
                      </item>
                      <item row="1" column="0">
                       <widget class="ApMl" name="analysismlwidget" native="true">
+                       <property name="sizePolicy">
+                        <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
+                         <horstretch>0</horstretch>
+                         <verstretch>0</verstretch>
+                        </sizepolicy>
+                       </property>
                        <property name="minimumSize">
                         <size>
-                         <width>300</width>
-                         <height>0</height>
+                         <width>200</width>
+                         <height>200</height>
                         </size>
                        </property>
                       </widget>
                      </item>
                      <item row="0" column="0">
                       <widget class="ApMl" name="analysisapwidget" native="true">
+                       <property name="sizePolicy">
+                        <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
+                         <horstretch>0</horstretch>
+                         <verstretch>0</verstretch>
+                        </sizepolicy>
+                       </property>
                        <property name="minimumSize">
                         <size>
-                         <width>300</width>
-                         <height>0</height>
+                         <width>200</width>
+                         <height>200</height>
                         </size>
                        </property>
                       </widget>

@@ -19,8 +19,8 @@ from PySide6.QtWidgets import (QAbstractScrollArea, QApplication, QCheckBox, QCo
     QFormLayout, QFrame, QGridLayout, QHBoxLayout,
     QHeaderView, QLabel, QLineEdit, QMainWindow,
     QPlainTextEdit, QPushButton, QScrollArea, QSizePolicy,
-    QSlider, QSpacerItem, QSpinBox, QTabWidget,
-    QTableWidget, QTableWidgetItem, QVBoxLayout, QWidget)
+    QSlider, QSpinBox, QTabWidget, QTableWidget,
+    QTableWidgetItem, QVBoxLayout, QWidget)
 
 from widgets import (ApMl, Stabilogram)
 
@@ -34,6 +34,9 @@ class Ui_MainWindow(object):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(MainWindow.sizePolicy().hasHeightForWidth())
         MainWindow.setSizePolicy(sizePolicy)
+        icon = QIcon()
+        icon.addFile(u"../../../../Stichting Hogeschool Utrecht/Wii balance board - General/Pictures/STEP-icon.png", QSize(), QIcon.Normal, QIcon.Off)
+        MainWindow.setWindowIcon(icon)
         MainWindow.setIconSize(QSize(50, 50))
         MainWindow.setToolButtonStyle(Qt.ToolButtonIconOnly)
         self.centralwidget = QWidget(MainWindow)
@@ -100,7 +103,7 @@ class Ui_MainWindow(object):
 
         self.recordlength = QSpinBox(self.livetab)
         self.recordlength.setObjectName(u"recordlength")
-        self.recordlength.setMinimum(1)
+        self.recordlength.setMinimum(11)
         self.recordlength.setMaximum(120)
         self.recordlength.setValue(30)
 
@@ -434,6 +437,8 @@ class Ui_MainWindow(object):
 
         self.analysisscrollarea = QScrollArea(self.analysistab)
         self.analysisscrollarea.setObjectName(u"analysisscrollarea")
+        sizePolicy1.setHeightForWidth(self.analysisscrollarea.sizePolicy().hasHeightForWidth())
+        self.analysisscrollarea.setSizePolicy(sizePolicy1)
         self.analysisscrollarea.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.analysisscrollarea.setWidgetResizable(True)
         self.analysiswidgetarea = QWidget()
@@ -457,8 +462,8 @@ class Ui_MainWindow(object):
         self.verticalLayout_4.setObjectName(u"verticalLayout_4")
         self.analysisstabilogramwidget = Stabilogram(self.widget_2)
         self.analysisstabilogramwidget.setObjectName(u"analysisstabilogramwidget")
-        sizePolicy.setHeightForWidth(self.analysisstabilogramwidget.sizePolicy().hasHeightForWidth())
-        self.analysisstabilogramwidget.setSizePolicy(sizePolicy)
+        sizePolicy1.setHeightForWidth(self.analysisstabilogramwidget.sizePolicy().hasHeightForWidth())
+        self.analysisstabilogramwidget.setSizePolicy(sizePolicy1)
         self.analysisstabilogramwidget.setMinimumSize(QSize(400, 400))
 
         self.verticalLayout_4.addWidget(self.analysisstabilogramwidget)
@@ -467,7 +472,7 @@ class Ui_MainWindow(object):
         self.generalvariables.setObjectName(u"generalvariables")
         sizePolicy5.setHeightForWidth(self.generalvariables.sizePolicy().hasHeightForWidth())
         self.generalvariables.setSizePolicy(sizePolicy5)
-        self.generalvariables.setSizeAdjustPolicy(QAbstractScrollArea.AdjustToContents)
+        self.generalvariables.setSizeAdjustPolicy(QAbstractScrollArea.AdjustToContentsOnFirstShow)
         self.generalvariables.horizontalHeader().setStretchLastSection(True)
         self.generalvariables.verticalHeader().setStretchLastSection(True)
 
@@ -660,10 +665,6 @@ class Ui_MainWindow(object):
         self.gridLayout.setObjectName(u"gridLayout")
         self.verticalLayout_7 = QVBoxLayout()
         self.verticalLayout_7.setObjectName(u"verticalLayout_7")
-        self.verticalSpacer = QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding)
-
-        self.verticalLayout_7.addItem(self.verticalSpacer)
-
         self.apvariables = QTableWidget(self.widget_2)
         self.apvariables.setObjectName(u"apvariables")
         sizePolicy7 = QSizePolicy(QSizePolicy.Preferred, QSizePolicy.Minimum)
@@ -672,48 +673,46 @@ class Ui_MainWindow(object):
         sizePolicy7.setHeightForWidth(self.apvariables.sizePolicy().hasHeightForWidth())
         self.apvariables.setSizePolicy(sizePolicy7)
         self.apvariables.setMinimumSize(QSize(350, 0))
+        self.apvariables.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        self.apvariables.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.apvariables.setSizeAdjustPolicy(QAbstractScrollArea.AdjustToContents)
 
         self.verticalLayout_7.addWidget(self.apvariables)
-
-        self.verticalSpacer_2 = QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding)
-
-        self.verticalLayout_7.addItem(self.verticalSpacer_2)
 
 
         self.gridLayout.addLayout(self.verticalLayout_7, 0, 1, 1, 1)
 
         self.verticalLayout_8 = QVBoxLayout()
         self.verticalLayout_8.setObjectName(u"verticalLayout_8")
-        self.verticalSpacer_3 = QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding)
-
-        self.verticalLayout_8.addItem(self.verticalSpacer_3)
-
         self.mlvariables = QTableWidget(self.widget_2)
         self.mlvariables.setObjectName(u"mlvariables")
         sizePolicy7.setHeightForWidth(self.mlvariables.sizePolicy().hasHeightForWidth())
         self.mlvariables.setSizePolicy(sizePolicy7)
         self.mlvariables.setMinimumSize(QSize(350, 0))
+        self.mlvariables.setHorizontalScrollBarPolicy(Qt.ScrollBarAsNeeded)
         self.mlvariables.setSizeAdjustPolicy(QAbstractScrollArea.AdjustToContents)
 
         self.verticalLayout_8.addWidget(self.mlvariables)
-
-        self.verticalSpacer_4 = QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding)
-
-        self.verticalLayout_8.addItem(self.verticalSpacer_4)
 
 
         self.gridLayout.addLayout(self.verticalLayout_8, 1, 1, 1, 1)
 
         self.analysismlwidget = ApMl(self.widget_2)
         self.analysismlwidget.setObjectName(u"analysismlwidget")
-        self.analysismlwidget.setMinimumSize(QSize(300, 0))
+        sizePolicy8 = QSizePolicy(QSizePolicy.MinimumExpanding, QSizePolicy.MinimumExpanding)
+        sizePolicy8.setHorizontalStretch(0)
+        sizePolicy8.setVerticalStretch(0)
+        sizePolicy8.setHeightForWidth(self.analysismlwidget.sizePolicy().hasHeightForWidth())
+        self.analysismlwidget.setSizePolicy(sizePolicy8)
+        self.analysismlwidget.setMinimumSize(QSize(200, 200))
 
         self.gridLayout.addWidget(self.analysismlwidget, 1, 0, 1, 1)
 
         self.analysisapwidget = ApMl(self.widget_2)
         self.analysisapwidget.setObjectName(u"analysisapwidget")
-        self.analysisapwidget.setMinimumSize(QSize(300, 0))
+        sizePolicy8.setHeightForWidth(self.analysisapwidget.sizePolicy().hasHeightForWidth())
+        self.analysisapwidget.setSizePolicy(sizePolicy8)
+        self.analysisapwidget.setMinimumSize(QSize(200, 200))
 
         self.gridLayout.addWidget(self.analysisapwidget, 0, 0, 1, 1)
 
@@ -742,7 +741,7 @@ class Ui_MainWindow(object):
 
         self.retranslateUi(MainWindow)
 
-        self.modes.setCurrentIndex(0)
+        self.modes.setCurrentIndex(1)
         self.stanceselect.setCurrentIndex(0)
         self.stanceselect_2.setCurrentIndex(0)
 

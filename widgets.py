@@ -43,16 +43,20 @@ class ApMl(QWidget):
         self.graph.setBackground(None)
         self.graph.showGrid(y=True)
         self.graph.setLabel('left', 'Sway', units='mm')
+
         self.graph.setLabel('bottom', 'Time', units='s')
         self.setmode('AP')
         self.graph.setMouseEnabled(x=False, y=True)
         self.graph.hideButtons()
 
-    def setmode(self, mode):
+    def setmode(self, mode, live=False):
+        if live:
+            self.graph.getAxis('bottom').setLabel(' ')
+            self.graph.getAxis('bottom').setTicks([])
         if mode == 'AP':
             self.graph.setRange(xRange=[0, 30], yRange=[-115, 115], update=True)
             self.graph.setTitle('AP')
-        if mode == 'ML':
+        elif mode == 'ML':
             self.graph.setRange(xRange=[0, 30], yRange=[-220, 220], update=True)
             self.graph.setTitle('ML')
 
