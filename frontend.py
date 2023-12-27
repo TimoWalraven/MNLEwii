@@ -742,7 +742,7 @@ class Ui_MainWindow(object):
 
         self.retranslateUi(MainWindow)
 
-        self.modes.setCurrentIndex(1)
+        self.modes.setCurrentIndex(0)
         self.stanceselect.setCurrentIndex(0)
         self.stanceselect_2.setCurrentIndex(0)
 
