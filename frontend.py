@@ -11,11 +11,16 @@
 from PySide6.QtCore import (QCoreApplication, QDate, QDateTime, QLocale,
     QMetaObject, QObject, QPoint, QRect,
     QSize, QTime, QUrl, Qt)
-from PySide6.QtGui import (QFont)
-from PySide6.QtWidgets import (QCheckBox, QComboBox, QFormLayout,
-    QFrame, QGridLayout, QHBoxLayout, QLabel, QLineEdit, QPlainTextEdit,
-    QPushButton, QScrollArea, QSizePolicy, QSlider,
-    QSpinBox, QTabWidget, QTableWidget, QVBoxLayout, QWidget)
+from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
+    QFont, QFontDatabase, QGradient, QIcon,
+    QImage, QKeySequence, QLinearGradient, QPainter,
+    QPalette, QPixmap, QRadialGradient, QTransform)
+from PySide6.QtWidgets import (QAbstractScrollArea, QApplication, QCheckBox, QComboBox,
+    QFormLayout, QFrame, QGridLayout, QHBoxLayout,
+    QHeaderView, QLabel, QLineEdit, QMainWindow,
+    QPlainTextEdit, QPushButton, QScrollArea, QSizePolicy,
+    QSlider, QSpacerItem, QSpinBox, QTabWidget,
+    QTableWidget, QTableWidgetItem, QVBoxLayout, QWidget)
 
 from widgets import (ApMl, Stabilogram)
 
@@ -23,7 +28,7 @@ class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         if not MainWindow.objectName():
             MainWindow.setObjectName(u"MainWindow")
-        MainWindow.resize(1261, 913)
+        MainWindow.resize(1252, 896)
         sizePolicy = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -429,10 +434,11 @@ class Ui_MainWindow(object):
 
         self.analysisscrollarea = QScrollArea(self.analysistab)
         self.analysisscrollarea.setObjectName(u"analysisscrollarea")
+        self.analysisscrollarea.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.analysisscrollarea.setWidgetResizable(True)
         self.analysiswidgetarea = QWidget()
         self.analysiswidgetarea.setObjectName(u"analysiswidgetarea")
-        self.analysiswidgetarea.setGeometry(QRect(0, 0, 1209, 801))
+        self.analysiswidgetarea.setGeometry(QRect(0, 0, 1208, 801))
         self.verticalLayout_3 = QVBoxLayout(self.analysiswidgetarea)
         self.verticalLayout_3.setObjectName(u"verticalLayout_3")
         self.horizontalLayout_4 = QHBoxLayout()
@@ -457,12 +463,15 @@ class Ui_MainWindow(object):
 
         self.verticalLayout_4.addWidget(self.analysisstabilogramwidget)
 
-        self.generalvariableswidget = QTableWidget(self.widget_2)
-        self.generalvariableswidget.setObjectName(u"generalvariableswidget")
-        sizePolicy5.setHeightForWidth(self.generalvariableswidget.sizePolicy().hasHeightForWidth())
-        self.generalvariableswidget.setSizePolicy(sizePolicy5)
+        self.generalvariables = QTableWidget(self.widget_2)
+        self.generalvariables.setObjectName(u"generalvariables")
+        sizePolicy5.setHeightForWidth(self.generalvariables.sizePolicy().hasHeightForWidth())
+        self.generalvariables.setSizePolicy(sizePolicy5)
+        self.generalvariables.setSizeAdjustPolicy(QAbstractScrollArea.AdjustToContents)
+        self.generalvariables.horizontalHeader().setStretchLastSection(True)
+        self.generalvariables.verticalHeader().setStretchLastSection(True)
 
-        self.verticalLayout_4.addWidget(self.generalvariableswidget)
+        self.verticalLayout_4.addWidget(self.generalvariables)
 
 
         self.horizontalLayout_3.addLayout(self.verticalLayout_4)
@@ -649,29 +658,64 @@ class Ui_MainWindow(object):
 
         self.gridLayout = QGridLayout()
         self.gridLayout.setObjectName(u"gridLayout")
-        self.analysisapwidget = ApMl(self.widget_2)
-        self.analysisapwidget.setObjectName(u"analysisapwidget")
+        self.verticalLayout_7 = QVBoxLayout()
+        self.verticalLayout_7.setObjectName(u"verticalLayout_7")
+        self.verticalSpacer = QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding)
 
-        self.gridLayout.addWidget(self.analysisapwidget, 0, 0, 1, 1)
-
-        self.analysismlwidget = ApMl(self.widget_2)
-        self.analysismlwidget.setObjectName(u"analysismlwidget")
-
-        self.gridLayout.addWidget(self.analysismlwidget, 1, 0, 1, 1)
+        self.verticalLayout_7.addItem(self.verticalSpacer)
 
         self.apvariables = QTableWidget(self.widget_2)
         self.apvariables.setObjectName(u"apvariables")
-        sizePolicy5.setHeightForWidth(self.apvariables.sizePolicy().hasHeightForWidth())
-        self.apvariables.setSizePolicy(sizePolicy5)
+        sizePolicy7 = QSizePolicy(QSizePolicy.Preferred, QSizePolicy.Minimum)
+        sizePolicy7.setHorizontalStretch(0)
+        sizePolicy7.setVerticalStretch(0)
+        sizePolicy7.setHeightForWidth(self.apvariables.sizePolicy().hasHeightForWidth())
+        self.apvariables.setSizePolicy(sizePolicy7)
+        self.apvariables.setMinimumSize(QSize(350, 0))
+        self.apvariables.setSizeAdjustPolicy(QAbstractScrollArea.AdjustToContents)
 
-        self.gridLayout.addWidget(self.apvariables, 0, 1, 1, 1)
+        self.verticalLayout_7.addWidget(self.apvariables)
+
+        self.verticalSpacer_2 = QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding)
+
+        self.verticalLayout_7.addItem(self.verticalSpacer_2)
+
+
+        self.gridLayout.addLayout(self.verticalLayout_7, 0, 1, 1, 1)
+
+        self.verticalLayout_8 = QVBoxLayout()
+        self.verticalLayout_8.setObjectName(u"verticalLayout_8")
+        self.verticalSpacer_3 = QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding)
+
+        self.verticalLayout_8.addItem(self.verticalSpacer_3)
 
         self.mlvariables = QTableWidget(self.widget_2)
         self.mlvariables.setObjectName(u"mlvariables")
-        sizePolicy5.setHeightForWidth(self.mlvariables.sizePolicy().hasHeightForWidth())
-        self.mlvariables.setSizePolicy(sizePolicy5)
+        sizePolicy7.setHeightForWidth(self.mlvariables.sizePolicy().hasHeightForWidth())
+        self.mlvariables.setSizePolicy(sizePolicy7)
+        self.mlvariables.setMinimumSize(QSize(350, 0))
+        self.mlvariables.setSizeAdjustPolicy(QAbstractScrollArea.AdjustToContents)
 
-        self.gridLayout.addWidget(self.mlvariables, 1, 1, 1, 1)
+        self.verticalLayout_8.addWidget(self.mlvariables)
+
+        self.verticalSpacer_4 = QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding)
+
+        self.verticalLayout_8.addItem(self.verticalSpacer_4)
+
+
+        self.gridLayout.addLayout(self.verticalLayout_8, 1, 1, 1, 1)
+
+        self.analysismlwidget = ApMl(self.widget_2)
+        self.analysismlwidget.setObjectName(u"analysismlwidget")
+        self.analysismlwidget.setMinimumSize(QSize(300, 0))
+
+        self.gridLayout.addWidget(self.analysismlwidget, 1, 0, 1, 1)
+
+        self.analysisapwidget = ApMl(self.widget_2)
+        self.analysisapwidget.setObjectName(u"analysisapwidget")
+        self.analysisapwidget.setMinimumSize(QSize(300, 0))
+
+        self.gridLayout.addWidget(self.analysisapwidget, 0, 0, 1, 1)
 
 
         self.verticalLayout_6.addLayout(self.gridLayout)
@@ -698,7 +742,7 @@ class Ui_MainWindow(object):
 
         self.retranslateUi(MainWindow)
 
-        self.modes.setCurrentIndex(0)
+        self.modes.setCurrentIndex(1)
         self.stanceselect.setCurrentIndex(0)
         self.stanceselect_2.setCurrentIndex(0)
 

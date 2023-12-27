@@ -1,5 +1,5 @@
 import sys
-from PySide6.QtWidgets import QApplication, QMainWindow, QFileDialog
+from PySide6.QtWidgets import QApplication, QMainWindow, QFileDialog, QTableWidgetItem
 from PySide6.QtCore import QTimer
 from PySide6.QtGui import QShortcut, QKeySequence
 from threading import Thread
@@ -8,9 +8,12 @@ from serial.tools import list_ports
 import datetime
 from time import sleep
 import numpy as np
+from pyentrp import entropy as ent
 # Custom imports
 import frontend
+from code_descriptors_postural_control.descriptors import compute_all_features
 from code_descriptors_postural_control.stabilogram.stato import Stabilogram
+
 
 class STEPviewer:
 
@@ -81,25 +84,20 @@ class STEPviewer:
         self.recordstate = False
 
         if dummy:
-            self.dummyrec = np.genfromtxt('QtDesigner/dummyrec.csv', delimiter=' ')[1:]
+            fileName = 'testrecordings/Timo.xlsx'
+            try:
+                import pandas as pd
+                data = pd.read_excel(fileName, sheet_name='Data')
+                metadata = pd.read_excel(fileName, sheet_name='Metadata')
+                self.dummyrec = data.to_numpy()
+                self.recordinginfo = {k: str(v[0]) for k, v in metadata.to_dict().items()}
+                self.readpatientinfo()
+            except Exception as e:
+                print(f"Error while opening file: {e}")
+                return
             self.livex = [i[1] for i in self.dummyrec]
             self.livey = [i[2] for i in self.dummyrec]
             self.recording = self.dummyrec
-            self.recordinginfo = {
-                "date": datetime.datetime.now().strftime("%d/%m/%Y"),
-                "time": datetime.datetime.now().strftime("%H:%M:%S"),
-                "duration": "10 s",
-                "stance": "double legged",
-                "eyes": "open",
-                "identifier": "dummyperson1",
-                "age": "50",
-                "height": "180 cm",
-                "weight": "83 kg",
-                "condition": "",
-                "medication": "",
-                "fallhistory": "",
-                "notes": ""
-            }
 
         # Analysis mode variables
         self.analysisidx = 0  # index of current measurement
@@ -122,7 +120,7 @@ class STEPviewer:
 
         # Analysis mode setup
         # shortcuts
-        #TODO: investigate why this prints space as well
+        # TODO: investigate why this prints space as well
         self.shortcut = QShortcut(QKeySequence("Space"), self.win)
         print(self.shortcut.key().toString())
         self.shortcut.activated.connect(self.playpause)
@@ -157,6 +155,7 @@ class STEPviewer:
 
         # Initialize timer for updating the plot and elapsed time
         self.start_time = datetime.datetime.now()
+        # TODO: set interval to correlate with target frequency
         self.interval = 10  # Interval in milliseconds
         self.timer = QTimer()
         self.timer.timeout.connect(self.update)
@@ -370,7 +369,7 @@ class STEPviewer:
         succes = False
         try:
             print(f"Saving file to {filename[0]}")
-            with pd.ExcelWriter(f'{filename[0]}', engine='xlsxwriter' , mode='w') as writer:
+            with pd.ExcelWriter(f'{filename[0]}', engine='xlsxwriter', mode='w') as writer:
                 data_df.to_excel(writer, sheet_name='Data', index=False)
                 metadata_df.to_excel(writer, sheet_name='Metadata', index=False)
                 print("File successfully saved locally.")
@@ -392,7 +391,8 @@ class STEPviewer:
     def openrecording(self):
         options = QFileDialog.Options()
         options |= QFileDialog.ReadOnly
-        fileName, _ = QFileDialog.getOpenFileName(self.win, 'Open recording', '', 'Report or raw data (*.xlsx *.json)', options=options)
+        fileName, _ = QFileDialog.getOpenFileName(self.win, 'Open recording', '', 'Report or raw data (*.xlsx *.json)',
+                                                  options=options)
         if fileName == '':
             print("No file selected.")
             return
@@ -558,6 +558,9 @@ class STEPviewer:
         self.update()
 
     def analyserecording(self):
+        def fill_table():
+            pass
+
         target_frequency = 100
         time = self.recording[:, 0]
         x = self.recording[:, 1]
@@ -613,23 +616,63 @@ class STEPviewer:
 
         self.readpatientinfo()
 
-        """# Table view
+        # Table view
+        # TODO: recording needs to be >= 11 seconds for this to work without errors
+        # TODO: convert to function
         features = compute_all_features(stato)
-        self.ui.tableWidget.setRowCount(len(features))
-        self.ui.tableWidget.setColumnCount(2)
-        self.ui.tableWidget.setHorizontalHeaderLabels(['Feature', 'Value'])
-        for i, (key, value) in enumerate(features.items()):
-            self.ui.tableWidget.setItem(i, 0, frontend.QTableWidgetItem(key))
-            self.ui.tableWidget.setItem(i, 1, frontend.QTableWidgetItem(str(value)))
-        # set width of columns
-        self.ui.tableWidget.setColumnWidth(0, 300)
-        self.ui.tableWidget.setColumnWidth(1, 300)"""
 
-        pass
+        #compute entropy
+        print("Computing entropy...")
+        features["entropy_AP"] = ent.sample_entropy(stato.signal[:,0], 2, 0.2 * np.std(stato.signal))[1]
+        features["entropy_ML"] = ent.sample_entropy(stato.signal[:,1], 2, 0.2 * np.std(stato.signal))[1]
+        print("Entropy computed.")
+
+        # AP/ML variables
+        variables = {
+            "mean_distance_": ["Mean distance", "mm"],
+            "rms_": ["RMS", "mm"],
+            "range_": ["Range", "mm"],
+            "mean_velocity_": ["Mean velocity", "mm/s"],
+            "entropy_": ["Entropy", "no unit"],
+        }
+        # AP variables
+        self.ui.apvariables.setRowCount(len(variables))
+        self.ui.apvariables.setColumnCount(4)
+        self.ui.apvariables.setHorizontalHeaderLabels(['Feature', 'Value', 'Reference', 'Unit'])
+        for i, (key, value) in enumerate(variables.items()):
+            self.ui.apvariables.setItem(i, 0, QTableWidgetItem(value[0]))
+            self.ui.apvariables.setItem(i, 1, QTableWidgetItem(str(features[f'{key}AP'].round(2))))
+            self.ui.apvariables.setItem(i, 2, QTableWidgetItem('unknown'))
+            self.ui.apvariables.setItem(i, 3, QTableWidgetItem(value[1]))
+
+        # ML variables
+        self.ui.mlvariables.setRowCount(len(variables))
+        self.ui.mlvariables.setColumnCount(4)
+        self.ui.mlvariables.setHorizontalHeaderLabels(['Feature', 'Value', 'Reference', 'Unit'])
+        for i, (key, value) in enumerate(variables.items()):
+            self.ui.mlvariables.setItem(i, 0, QTableWidgetItem(value[0]))
+            self.ui.mlvariables.setItem(i, 1, QTableWidgetItem(str(features[f'{key}AP'].round(2))))
+            self.ui.mlvariables.setItem(i, 2, QTableWidgetItem('unknown'))
+            self.ui.mlvariables.setItem(i, 3, QTableWidgetItem(value[1]))
+
+        # general variables
+        variables = {"mean_distance_Radius": ["Mean distance radius", "mm"],
+                     }
+
+        self.ui.generalvariables.setRowCount(len(variables))
+        self.ui.generalvariables.setColumnCount(4)
+        self.ui.generalvariables.setHorizontalHeaderLabels(['Feature', 'Value', 'Reference', 'Unit'])
+        for i, (key, value) in enumerate(variables.items()):
+            self.ui.generalvariables.setItem(i, 0, QTableWidgetItem(value[0]))
+            self.ui.generalvariables.setItem(i, 1, QTableWidgetItem(str(features[key].round(2))))
+            self.ui.generalvariables.setItem(i, 2, QTableWidgetItem('unknown'))
+            self.ui.generalvariables.setItem(i, 3, QTableWidgetItem(value[1]))
+
+
 
     def readpatientinfo(self):
         try:
-            #live mode
+            # live mode
             self.ui.stanceselect.setCurrentText(self.recordinginfo['stance'])
             self.ui.eyeselect.setCurrentText(self.recordinginfo['eyes'])
             self.ui.identifierselect.setText(self.recordinginfo['identifier'])
@@ -640,7 +683,7 @@ class STEPviewer:
             self.ui.medicationselect.setCurrentText(self.recordinginfo['medication'])
             self.ui.fallhistoryselect.setCurrentText(self.recordinginfo['fallhistory'])
             self.ui.notesedit.setPlainText(self.recordinginfo['notes'])
-            #analysis mode
+            # analysis mode
             self.ui.testinfolabel_2.setText(f"Test Info | {self.recordinginfo['date']} | {self.recordinginfo['time']}")
             self.ui.stanceselect_2.setCurrentText(self.recordinginfo['stance'])
             self.ui.eyeselect_2.setCurrentText(self.recordinginfo['eyes'])
@@ -669,7 +712,6 @@ class STEPviewer:
             print(f"Error while generating random identifier: {e}")
             return
 
+
 if __name__ == '__main__':
-    plot = STEPviewer(dummy=False)
-
-
+    plot = STEPviewer(dummy=True)

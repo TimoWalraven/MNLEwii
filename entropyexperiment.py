@@ -1,6 +1,7 @@
 import numpy as np
-from EntropyHub._SampEn import SampEn
+from EntropyHub import SampEn
 from pyentrp import entropy as ent
+import timeit
 
 def sample_entropy(series, m, r):
     """
@@ -40,13 +41,20 @@ def sample_entropy(series, m, r):
 
 
 # load np array from csv
-data = np.genfromtxt('testrecordings/test 100hz  2.csv', delimiter=' ', skip_header=1)
+fileName = 'testrecordings/Timo.xlsx'
+try:
+    import pandas as pd
+    data = pd.read_excel(fileName, sheet_name='Data')
+    data = data.to_numpy()
+except Exception as e:
+    print(f"Error while opening file: {e}")
+    exit(1)
+
+# get second and third column
 data = data[:, 1]
 std = np.std(data)
-sample_entropy1 = sample_entropy(data, 2, 0.2)
-sample_entropy2 = SampEn(data, 2, 1, 0.2*std)
-sample_entropy3 = ent.sample_entropy(data, 2, 0.2*std)
-print(f'{sample_entropy1:.3f}')
-print(f'{sample_entropy2}')
-print(f'{sample_entropy3}')
 
+# time the function
+#print(timeit.timeit(lambda: sample_entropy(data, 2, 0.2), number=10))
+#print(timeit.timeit(lambda: SampEn(data, 2, 0.2), number=10))
+print(timeit.timeit(lambda: ent.sample_entropy(data, 2, 0.2), number=10))
