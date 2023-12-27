@@ -245,6 +245,12 @@ class STEPviewer:
             if self.ui.comport.currentText() != self.status:
                 self.ui.comport.setCurrentText(self.status)
 
+            # record button color
+            if self.recordstate and self.ui.startrecording.styleSheet() != "background-color: red":
+                self.ui.startrecording.setStyleSheet("background-color: red")
+            elif not self.recordstate and self.ui.startrecording.styleSheet() != "background-color: none":
+                self.ui.startrecording.setStyleSheet("background-color: none")
+
         # Analysis mode
         # TODO: if initialized in mode 1, doesnt connect
         elif self.mode == 1:
@@ -456,8 +462,8 @@ class STEPviewer:
             print(f"Recording for {seconds} seconds...")
             self.ui.startrecording.setDisabled(True)
             try:
+                self.recordstate = True
                 while (datetime.datetime.now() - start_time).total_seconds() <= seconds:
-                    self.recordstate = True
                     times.append((datetime.datetime.now() - start_time).total_seconds())
                     xs.append(self.livex[-1])
                     ys.append(self.livey[-1])
@@ -469,6 +475,7 @@ class STEPviewer:
                 return
 
             self.recordstate = False
+            self.ui.startrecording.setStyleSheet("background-color: none")
             print("Done recording")
             self.recording = np.column_stack((times, xs, ys))
             self.recordinginfo = {"date": start_time.strftime("%d/%m/%Y"),
@@ -574,6 +581,10 @@ class STEPviewer:
         # round to 2 decimals
         newdata = np.round(newdata, 2)
         self.analysisdata = newdata
+
+        # reset analysisidx
+        self.analysisidx = 0
+        self.ui.timeslider.setValue(0)
 
         # enable buttons and change mode
         self.ui.analysisplay.setDisabled(False)
