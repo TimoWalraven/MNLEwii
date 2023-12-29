@@ -2,7 +2,7 @@ import sys
 import time
 
 from PySide6.QtWidgets import QApplication, QMainWindow, QFileDialog, QTableWidgetItem
-from PySide6.QtCore import QTimer
+from PySide6.QtCore import Qt, QTimer
 from PySide6.QtGui import QShortcut, QKeySequence
 from threading import Thread
 import serial
@@ -117,8 +117,7 @@ class STEPviewer:
         # Analysis mode setup
         # shortcuts
         # TODO: investigate why this prints space as well
-        self.shortcut = QShortcut(QKeySequence("Space"), self.win)
-        print(self.shortcut.key().toString())
+        self.shortcut = QShortcut(Qt.Key_Space, self.win)
         self.shortcut.activated.connect(self.playpause)
         # Toolbar: from left to right
         # Open file button

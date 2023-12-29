@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1252</width>
-    <height>896</height>
+    <width>1261</width>
+    <height>913</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -740,7 +740,7 @@ border-radius: 10px; </string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>1208</width>
+             <width>1209</width>
              <height>801</height>
             </rect>
            </property>
@@ -754,11 +754,6 @@ border-radius: 10px; </string>
                   <width>0</width>
                   <height>400</height>
                  </size>
-                </property>
-                <property name="styleSheet">
-                 <string notr="true">border-color: rgb(0, 0, 0);
-border-thickness: 1px;
-</string>
                 </property>
                 <layout class="QHBoxLayout" name="horizontalLayout_3">
                  <property name="spacing">

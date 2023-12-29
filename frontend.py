@@ -28,7 +28,7 @@ class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         if not MainWindow.objectName():
             MainWindow.setObjectName(u"MainWindow")
-        MainWindow.resize(1252, 896)
+        MainWindow.resize(1261, 913)
         sizePolicy = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -444,7 +444,7 @@ class Ui_MainWindow(object):
         self.analysisscrollarea.setWidgetResizable(True)
         self.analysiswidgetarea = QWidget()
         self.analysiswidgetarea.setObjectName(u"analysiswidgetarea")
-        self.analysiswidgetarea.setGeometry(QRect(0, 0, 1208, 801))
+        self.analysiswidgetarea.setGeometry(QRect(0, 0, 1209, 801))
         self.verticalLayout_3 = QVBoxLayout(self.analysiswidgetarea)
         self.verticalLayout_3.setObjectName(u"verticalLayout_3")
         self.horizontalLayout_4 = QHBoxLayout()
@@ -452,9 +452,6 @@ class Ui_MainWindow(object):
         self.widget_2 = QWidget(self.analysiswidgetarea)
         self.widget_2.setObjectName(u"widget_2")
         self.widget_2.setMinimumSize(QSize(0, 400))
-        self.widget_2.setStyleSheet(u"border-color: rgb(0, 0, 0);\n"
-"border-thickness: 1px;\n"
-"")
         self.horizontalLayout_3 = QHBoxLayout(self.widget_2)
         self.horizontalLayout_3.setSpacing(10)
         self.horizontalLayout_3.setObjectName(u"horizontalLayout_3")
