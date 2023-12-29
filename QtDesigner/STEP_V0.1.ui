@@ -46,7 +46,7 @@
        <string notr="true"/>
       </property>
       <property name="currentIndex">
-       <number>1</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="livetab">
        <property name="sizePolicy">
@@ -499,7 +499,7 @@ border-radius: 10px; </string>
                    </item>
                    <item>
                     <property name="text">
-                     <string>Painkillers</string>
+                     <string>painkillers</string>
                     </property>
                    </item>
                   </widget>
@@ -516,6 +516,11 @@ border-radius: 10px; </string>
                    <property name="editable">
                     <bool>true</bool>
                    </property>
+                   <item>
+                    <property name="text">
+                     <string/>
+                    </property>
+                   </item>
                    <item>
                     <property name="text">
                      <string>No recent incidents</string>

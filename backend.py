@@ -1,4 +1,6 @@
 import sys
+import time
+
 from PySide6.QtWidgets import QApplication, QMainWindow, QFileDialog, QTableWidgetItem
 from PySide6.QtCore import QTimer
 from PySide6.QtGui import QShortcut, QKeySequence
@@ -84,20 +86,14 @@ class STEPviewer:
         self.recordstate = False
 
         if dummy:
-            fileName = 'testrecordings/Timo.xlsx'
+            dummypath = 'testrecordings/STEP_dummyrecording.xlsx'
             try:
-                import pandas as pd
-                data = pd.read_excel(fileName, sheet_name='Data')
-                metadata = pd.read_excel(fileName, sheet_name='Metadata')
-                self.dummyrec = data.to_numpy()
-                self.recordinginfo = {k: str(v[0]) for k, v in metadata.to_dict().items()}
-                self.readpatientinfo()
+                self.openrecording(filename=dummypath)
             except Exception as e:
                 print(f"Error while opening file: {e}")
                 return
-            self.livex = [i[1] for i in self.dummyrec]
-            self.livey = [i[2] for i in self.dummyrec]
-            self.recording = self.dummyrec
+            self.livex = [i[1] for i in self.recording]
+            self.livey = [i[2] for i in self.recording]
 
         # Analysis mode variables
         self.analysisidx = 0  # index of current measurement
@@ -172,19 +168,23 @@ class STEPviewer:
         self.app.exec()
 
     def update_com(self):
-        '''
-        Method that get the lost of available coms in the system
-        '''
-
+        """
+        Method that gets the list of available coms in the system
+        """
         # update com list
         ports = list_ports.comports()
+        # exclude bluetooth serial ports
+        ports = set([port for port in ports if 'Bluetooth' not in port[1]])
+        print(f"Found {len(ports)} com ports.")
         if len(ports) == 0:
-            self.com_list = ['No com ports found']
+            self.com_list = {'No com ports found'}
         else:
-            self.com_list = [com[0] for com in ports]
+            self.com_list = set([com[0] for com in ports])
 
         # update com port dropdown
-        if self.ui.comport.currentText() not in self.com_list:
+        # get current com ports
+        current_coms = set([self.ui.comport.itemText(i) for i in range(self.ui.comport.count())])
+        if current_coms != self.com_list:
             self.ui.comport.clear()
             self.ui.comport.addItems(self.com_list)
 
@@ -192,6 +192,7 @@ class STEPviewer:
         while True:
             if self.mode == 0:
                 self.display = False
+                self.update_com()
                 if self.com_port_selected != self.ui.comport.currentText() and self.ui.comport.currentText() in self.com_list:
                     self.com_port_selected = self.ui.comport.currentText()
                     print(f'com port selected: {self.com_port_selected}')
@@ -206,6 +207,7 @@ class STEPviewer:
                             while self.com_port_selected == self.ui.comport.currentText() and self.mode == 0:
                                 incoming = ser.readline().decode()
                                 if incoming and incoming != '':
+                                    self.display = True
                                     line += incoming[1:-2]
                                     self.livex.append(float(line.split(', ')[0]))
                                     self.livey.append(float(line.split(', ')[1]))
@@ -214,6 +216,8 @@ class STEPviewer:
                                         self.livex.pop(0)
                                         self.livey.pop(0)
                                 else:
+                                    self.display = False
+                                    time.sleep(0.01)
                                     continue
 
                     except serial.SerialException as e:
@@ -238,12 +242,6 @@ class STEPviewer:
                 self.ui.statuslight.setStyleSheet("background-color: green; border-radius: 10px")
             elif not self.display and self.ui.statuslight.styleSheet() != "background-color: red; border-radius: 10px":
                 self.ui.statuslight.setStyleSheet("background-color: red; border-radius: 10px")
-            # com port selection
-            self.update_com()
-            # Status text
-            if self.ui.comport.currentText() != self.status:
-                self.ui.comport.setCurrentText(self.status)
-
             # record button color
             if self.recordstate and self.ui.startrecording.styleSheet() != "background-color: red":
                 self.ui.startrecording.setStyleSheet("background-color: red")
@@ -251,7 +249,6 @@ class STEPviewer:
                 self.ui.startrecording.setStyleSheet("background-color: none")
 
         # Analysis mode
-        # TODO: if initialized in mode 1, doesnt connect
         elif self.mode == 1:
             if len(self.analysisdata) > 1:
                 self.ui.currenttime.setText(f'{self.analysisdata[self.analysisidx][0]:.2f} s')
@@ -266,10 +263,10 @@ class STEPviewer:
                     self.ui.timeslider.setValue(self.analysisidx)
                 if self.playstate and self.analysisidx < len(self.analysisdata) - 1:
                     self.analysisidx += 1
-
                 elif self.playstate and self.analysisidx >= len(self.analysisdata) - 1:
                     self.playstate = False
                     self.ui.analysisplay.setDisabled(True)
+
         QApplication.processEvents()
 
     def saverecording(self):
@@ -388,21 +385,22 @@ class STEPviewer:
                 print(f"Error while uploading file: {e}")
                 return
 
-    def openrecording(self):
-        options = QFileDialog.Options()
-        options |= QFileDialog.ReadOnly
-        fileName, _ = QFileDialog.getOpenFileName(self.win, 'Open recording', '', 'Report or raw data (*.xlsx *.json)',
+    def openrecording(self, filename=None):
+        if not filename:
+            options = QFileDialog.Options()
+            options |= QFileDialog.ReadOnly
+            filename, _ = QFileDialog.getOpenFileName(self.win, 'Open recording', '', 'Report or raw data (*.xlsx *.json)',
                                                   options=options)
-        if fileName == '':
+        if filename == '':
             print("No file selected.")
             return
 
-        extention = fileName.split('.')[-1]
+        extention = filename.split('.')[-1]
         if extention == 'xlsx':
             try:
                 import pandas as pd
-                data = pd.read_excel(fileName, sheet_name='Data')
-                metadata = pd.read_excel(fileName, sheet_name='Metadata')
+                data = pd.read_excel(filename, sheet_name='Data')
+                metadata = pd.read_excel(filename, sheet_name='Metadata')
                 self.recording = data.to_numpy()
                 self.recordinginfo = {k: str(v[0]) for k, v in metadata.to_dict().items()}
                 self.readpatientinfo()
@@ -413,7 +411,7 @@ class STEPviewer:
         elif extention == 'json':
             try:
                 import pandas as pd
-                data = pd.read_json(fileName, orient='records', typ='series')
+                data = pd.read_json(filename, orient='records', typ='series')
                 metadata = data['metadata']
                 self.recordinginfo = self.recordinginfo | metadata
                 data = data['data']
@@ -566,9 +564,9 @@ class STEPviewer:
         x = self.recording[:, 1]
         y = self.recording[:, 2]
         # normalize time, x and y
-        time = time - time[0]
-        x = x - np.mean(x)
-        y = y - np.mean(y)
+        time -= time[0]
+        x -= np.mean(x)
+        y -= np.mean(y)
         data = np.array([time, x, y]).T
 
         valid_index = (np.sum(np.isnan(data), axis=1) == 0)
@@ -715,4 +713,4 @@ class STEPviewer:
 
 
 if __name__ == '__main__':
-    plot = STEPviewer(dummy=True)
+    plot = STEPviewer(dummy=False)

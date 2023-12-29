@@ -302,6 +302,7 @@ class Ui_MainWindow(object):
         self.fallhistoryselect = QComboBox(self.frame)
         self.fallhistoryselect.addItem("")
         self.fallhistoryselect.addItem("")
+        self.fallhistoryselect.addItem("")
         self.fallhistoryselect.setObjectName(u"fallhistoryselect")
         self.fallhistoryselect.setEditable(True)
 
@@ -741,7 +742,7 @@ class Ui_MainWindow(object):
 
         self.retranslateUi(MainWindow)
 
-        self.modes.setCurrentIndex(1)
+        self.modes.setCurrentIndex(0)
         self.stanceselect.setCurrentIndex(0)
         self.stanceselect_2.setCurrentIndex(0)
 
@@ -787,11 +788,12 @@ class Ui_MainWindow(object):
         self.testinfolabel.setText(QCoreApplication.translate("MainWindow", u"Test info", None))
         self.medicationlabel.setText(QCoreApplication.translate("MainWindow", u"Medication", None))
         self.medicationselect.setItemText(0, "")
-        self.medicationselect.setItemText(1, QCoreApplication.translate("MainWindow", u"Painkillers", None))
+        self.medicationselect.setItemText(1, QCoreApplication.translate("MainWindow", u"painkillers", None))
 
         self.fallhistorylabel.setText(QCoreApplication.translate("MainWindow", u"Fall history", None))
-        self.fallhistoryselect.setItemText(0, QCoreApplication.translate("MainWindow", u"No recent incidents", None))
-        self.fallhistoryselect.setItemText(1, QCoreApplication.translate("MainWindow", u"Fell in last year", None))
+        self.fallhistoryselect.setItemText(0, "")
+        self.fallhistoryselect.setItemText(1, QCoreApplication.translate("MainWindow", u"No recent incidents", None))
+        self.fallhistoryselect.setItemText(2, QCoreApplication.translate("MainWindow", u"Fell in last year", None))
 
         self.identifierlabel.setText(QCoreApplication.translate("MainWindow", u"Identifier", None))
         self.identifierreload.setText(QCoreApplication.translate("MainWindow", u"regenerate", None))

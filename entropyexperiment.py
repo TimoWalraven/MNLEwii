@@ -41,7 +41,7 @@ def sample_entropy(series, m, r):
 
 
 # load np array from csv
-fileName = 'testrecordings/Timo.xlsx'
+fileName = 'testrecordings/STEP_dummyrecording.xlsx'
 try:
     import pandas as pd
     data = pd.read_excel(fileName, sheet_name='Data')
