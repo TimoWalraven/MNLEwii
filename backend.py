@@ -201,7 +201,7 @@ class STEPviewer:
                         print(f"Opening serial port {self.com_port_selected}...")
                         with serial.Serial(self.com_port_selected, 9600, timeout=1) as ser:
                             print(f"Serial port {ser.name} successfully opened.")
-                            self.ui.statustext.setText(f"connected")
+                            self.status = 'connected'
                             self.display = True
                             line = ''
                             while self.com_port_selected == self.ui.comport.currentText() and self.mode == 0:
@@ -242,6 +242,9 @@ class STEPviewer:
                 self.ui.statuslight.setStyleSheet("background-color: green; border-radius: 10px")
             elif not self.display and self.ui.statuslight.styleSheet() != "background-color: red; border-radius: 10px":
                 self.ui.statuslight.setStyleSheet("background-color: red; border-radius: 10px")
+            # status text
+            if self.status != self.ui.statustext.text():
+                self.ui.statustext.setText(self.status)
             # record button color
             if self.recordstate and self.ui.startrecording.styleSheet() != "background-color: red":
                 self.ui.startrecording.setStyleSheet("background-color: red")
@@ -461,6 +464,7 @@ class STEPviewer:
             self.ui.startrecording.setDisabled(True)
             try:
                 self.recordstate = True
+                self.status = 'recording...'
                 while (datetime.datetime.now() - start_time).total_seconds() <= seconds:
                     times.append((datetime.datetime.now() - start_time).total_seconds())
                     xs.append(self.livex[-1])
@@ -469,10 +473,13 @@ class STEPviewer:
             except Exception as e:
                 print(f"Error while recording: {e}")
                 self.recordstate = False
+                self.status = f"Error while recording: {e}"
+                self.ui.startrecording.setStyleSheet("background-color: none")
                 self.ui.startrecording.setDisabled(False)
                 return
 
             self.recordstate = False
+            self.status = "Done recording"
             self.ui.startrecording.setStyleSheet("background-color: none")
             print("Done recording")
             self.recording = np.column_stack((times, xs, ys))
@@ -618,7 +625,6 @@ class STEPviewer:
         # TODO: recording needs to be >= 11 seconds for this to work without errors
         # TODO: convert to function
         features = compute_all_features(stato)
-        print(features)
 
         #compute entropy
         print("Computing entropy...")
