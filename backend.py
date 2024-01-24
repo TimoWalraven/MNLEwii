@@ -98,6 +98,7 @@ class STEPviewer:
         # Analysis mode variables
         self.analysisidx = 0  # index of current measurement
         self.playstate = False  # state of the play button
+        self.variables = None  # dictionary of variables
 
         # Live mode setup
         # Toolbar: from left to right
@@ -277,7 +278,7 @@ class STEPviewer:
 
     def saverecording(self):
 
-        def sendtoresearchdrive(data, metadata):
+        def sendtoresearchdrive(data, metadata, mode='excel'):
 
             print(f"Checking credentials...")
             if None in (self.config['url'], self.config['username'], self.config['password']):
@@ -299,26 +300,44 @@ class STEPviewer:
                 print(f"Error while checking credentials: {e}")
                 return
 
-            # TODO: check if user can write
-            print(f"Converting data to json...")
-            data_json = data.to_json(orient='records')
+            print(f"Generating filename...")
             metadata_json = dict(metadata.iloc[0])
             import json
             metadata_json = json.dumps(metadata_json)
-            combined_json = f'{{"metadata": {metadata_json}, "data": {data_json}}}'
-            print(f"Generating filename...")
             import os, hashlib
             filename = hashlib.sha256(metadata_json.encode()).hexdigest()
-            filepath = os.path.join(os.getcwd(), f'{filename}.json')
-            # save temporary file locally
-            try:
-                print(f"Saving temp file locally...")
-                with open(filepath, 'w') as f:
-                    f.write(combined_json)
-                    print(f"File saved locally.")
-            except Exception as e:
-                print(f"Error while saving temporary file: {e}")
-                return
+
+            # convert calculated variables to dataframe
+            variables_df = pd.DataFrame(self.variables, index=[0])
+
+            if mode == 'excel':
+                print(f"Converting data to excel...")
+                filepath = os.path.join(os.getcwd(), f'{filename}.xlsx')
+                # Create a Pandas Excel writer using XlsxWriter as the engine.
+                writer = pd.ExcelWriter(filepath, engine="xlsxwriter")
+                # Convert the dataframe to an XlsxWriter Excel object.
+                data.to_excel(writer, sheet_name="Data")
+                metadata.to_excel(writer, sheet_name="Metadata")
+                variables_df.to_excel(writer, sheet_name="Variables")
+                # Close the Pandas Excel writer and output the Excel file.
+                writer.close()
+
+            elif mode == 'json':
+                print(f"Converting data to json...")
+                filepath = os.path.join(os.getcwd(), f'{filename}.json')
+                data_json = data.to_json(orient='records')
+                variables_json = variables_df.to_json(orient='records')
+                file = f'{{"metadata": {metadata_json}, "data": {data_json}, "variables": {variables_json}}}'
+
+                # save temporary file locally
+                try:
+                    print(f"Saving temp file locally...")
+                    with open(filepath, 'w') as f:
+                        f.write(file)
+                        print(f"File saved locally.")
+                except Exception as e:
+                    print(f"Error while saving temporary file: {e}")
+                    return
             # upload file to research drive
             command = f'curl -T {filepath} -u "{username}:{password}" {url}{filename}'
             try:
@@ -510,6 +529,9 @@ class STEPviewer:
             print("No balance board connected.")
             return
         elif self.status == 'connected':
+            print("Connected to COM, but not receiving data.")
+            return
+        elif self.status == 'display':
             recordthread = Thread(target=record, args=(self.ui.recordlength.value(),))
             recordthread.daemon = True
             recordthread.start()
@@ -628,6 +650,7 @@ class STEPviewer:
         # TODO: recording needs to be >= 11 seconds for this to work without errors
         # TODO: convert to function
         features = compute_all_features(stato)
+        self.variables = features
 
         #compute entropy
         print("Computing entropy...")
