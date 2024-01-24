@@ -19,8 +19,8 @@ from PySide6.QtWidgets import (QAbstractScrollArea, QApplication, QCheckBox, QCo
     QFormLayout, QFrame, QGridLayout, QHBoxLayout,
     QHeaderView, QLabel, QLineEdit, QMainWindow,
     QPlainTextEdit, QPushButton, QScrollArea, QSizePolicy,
-    QSlider, QSpinBox, QTabWidget, QTableWidget,
-    QTableWidgetItem, QVBoxLayout, QWidget)
+    QSlider, QSpacerItem, QSpinBox, QTabWidget,
+    QTableWidget, QTableWidgetItem, QVBoxLayout, QWidget)
 
 from widgets import (ApMl, Stabilogram)
 
@@ -85,21 +85,9 @@ class Ui_MainWindow(object):
 
         self.horizontalLayout.addWidget(self.comport)
 
-        self.label = QLabel(self.livetab)
-        self.label.setObjectName(u"label")
+        self.horizontalSpacer = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
 
-        self.horizontalLayout.addWidget(self.label)
-
-        self.statustext = QLabel(self.livetab)
-        self.statustext.setObjectName(u"statustext")
-        sizePolicy4 = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Preferred)
-        sizePolicy4.setHorizontalStretch(0)
-        sizePolicy4.setVerticalStretch(0)
-        sizePolicy4.setHeightForWidth(self.statustext.sizePolicy().hasHeightForWidth())
-        self.statustext.setSizePolicy(sizePolicy4)
-        self.statustext.setFrameShape(QFrame.Box)
-
-        self.horizontalLayout.addWidget(self.statustext)
+        self.horizontalLayout.addItem(self.horizontalSpacer)
 
         self.recordlength = QSpinBox(self.livetab)
         self.recordlength.setObjectName(u"recordlength")
@@ -137,11 +125,11 @@ class Ui_MainWindow(object):
         self.datadisplay.setObjectName(u"datadisplay")
         self.livestabilogramwidget = Stabilogram(self.livetab)
         self.livestabilogramwidget.setObjectName(u"livestabilogramwidget")
-        sizePolicy5 = QSizePolicy(QSizePolicy.Minimum, QSizePolicy.Minimum)
-        sizePolicy5.setHorizontalStretch(0)
-        sizePolicy5.setVerticalStretch(0)
-        sizePolicy5.setHeightForWidth(self.livestabilogramwidget.sizePolicy().hasHeightForWidth())
-        self.livestabilogramwidget.setSizePolicy(sizePolicy5)
+        sizePolicy4 = QSizePolicy(QSizePolicy.Minimum, QSizePolicy.Minimum)
+        sizePolicy4.setHorizontalStretch(0)
+        sizePolicy4.setVerticalStretch(0)
+        sizePolicy4.setHeightForWidth(self.livestabilogramwidget.sizePolicy().hasHeightForWidth())
+        self.livestabilogramwidget.setSizePolicy(sizePolicy4)
         self.livestabilogramwidget.setMinimumSize(QSize(800, 800))
         self.livestabilogramwidget.setStyleSheet(u"")
 
@@ -151,8 +139,8 @@ class Ui_MainWindow(object):
         self.livedisplayright.setObjectName(u"livedisplayright")
         self.frame = QFrame(self.livetab)
         self.frame.setObjectName(u"frame")
-        sizePolicy5.setHeightForWidth(self.frame.sizePolicy().hasHeightForWidth())
-        self.frame.setSizePolicy(sizePolicy5)
+        sizePolicy4.setHeightForWidth(self.frame.sizePolicy().hasHeightForWidth())
+        self.frame.setSizePolicy(sizePolicy4)
         self.frame.setMinimumSize(QSize(400, 400))
         self.frame.setStyleSheet(u"border-color: rgb(0, 0, 0);")
         self.frame.setFrameShape(QFrame.Box)
@@ -251,11 +239,11 @@ class Ui_MainWindow(object):
 
         self.notesedit = QPlainTextEdit(self.frame)
         self.notesedit.setObjectName(u"notesedit")
-        sizePolicy6 = QSizePolicy(QSizePolicy.Minimum, QSizePolicy.Expanding)
-        sizePolicy6.setHorizontalStretch(0)
-        sizePolicy6.setVerticalStretch(0)
-        sizePolicy6.setHeightForWidth(self.notesedit.sizePolicy().hasHeightForWidth())
-        self.notesedit.setSizePolicy(sizePolicy6)
+        sizePolicy5 = QSizePolicy(QSizePolicy.Minimum, QSizePolicy.Expanding)
+        sizePolicy5.setHorizontalStretch(0)
+        sizePolicy5.setVerticalStretch(0)
+        sizePolicy5.setHeightForWidth(self.notesedit.sizePolicy().hasHeightForWidth())
+        self.notesedit.setSizePolicy(sizePolicy5)
         self.notesedit.setMinimumSize(QSize(100, 30))
         self.notesedit.setMaximumSize(QSize(16777215, 100))
 
@@ -322,8 +310,8 @@ class Ui_MainWindow(object):
 
         self.identifierreload = QPushButton(self.frame)
         self.identifierreload.setObjectName(u"identifierreload")
-        sizePolicy5.setHeightForWidth(self.identifierreload.sizePolicy().hasHeightForWidth())
-        self.identifierreload.setSizePolicy(sizePolicy5)
+        sizePolicy4.setHeightForWidth(self.identifierreload.sizePolicy().hasHeightForWidth())
+        self.identifierreload.setSizePolicy(sizePolicy4)
         self.identifierreload.setMaximumSize(QSize(80, 16777215))
 
         self.horizontalLayout_5.addWidget(self.identifierreload)
@@ -444,7 +432,7 @@ class Ui_MainWindow(object):
         self.analysisscrollarea.setWidgetResizable(True)
         self.analysiswidgetarea = QWidget()
         self.analysiswidgetarea.setObjectName(u"analysiswidgetarea")
-        self.analysiswidgetarea.setGeometry(QRect(0, 0, 1209, 801))
+        self.analysiswidgetarea.setGeometry(QRect(0, 0, 999, 424))
         self.verticalLayout_3 = QVBoxLayout(self.analysiswidgetarea)
         self.verticalLayout_3.setObjectName(u"verticalLayout_3")
         self.horizontalLayout_4 = QHBoxLayout()
@@ -468,8 +456,8 @@ class Ui_MainWindow(object):
 
         self.generalvariables = QTableWidget(self.widget_2)
         self.generalvariables.setObjectName(u"generalvariables")
-        sizePolicy5.setHeightForWidth(self.generalvariables.sizePolicy().hasHeightForWidth())
-        self.generalvariables.setSizePolicy(sizePolicy5)
+        sizePolicy4.setHeightForWidth(self.generalvariables.sizePolicy().hasHeightForWidth())
+        self.generalvariables.setSizePolicy(sizePolicy4)
         self.generalvariables.setSizeAdjustPolicy(QAbstractScrollArea.AdjustToContentsOnFirstShow)
         self.generalvariables.horizontalHeader().setStretchLastSection(True)
         self.generalvariables.verticalHeader().setStretchLastSection(True)
@@ -579,8 +567,8 @@ class Ui_MainWindow(object):
         self.notesedit_2 = QPlainTextEdit(self.widget_2)
         self.notesedit_2.setObjectName(u"notesedit_2")
         self.notesedit_2.setEnabled(True)
-        sizePolicy6.setHeightForWidth(self.notesedit_2.sizePolicy().hasHeightForWidth())
-        self.notesedit_2.setSizePolicy(sizePolicy6)
+        sizePolicy5.setHeightForWidth(self.notesedit_2.sizePolicy().hasHeightForWidth())
+        self.notesedit_2.setSizePolicy(sizePolicy5)
         self.notesedit_2.setMinimumSize(QSize(100, 30))
         self.notesedit_2.setMaximumSize(QSize(16777215, 100))
 
@@ -665,11 +653,11 @@ class Ui_MainWindow(object):
         self.verticalLayout_7.setObjectName(u"verticalLayout_7")
         self.apvariables = QTableWidget(self.widget_2)
         self.apvariables.setObjectName(u"apvariables")
-        sizePolicy7 = QSizePolicy(QSizePolicy.Preferred, QSizePolicy.Minimum)
-        sizePolicy7.setHorizontalStretch(0)
-        sizePolicy7.setVerticalStretch(0)
-        sizePolicy7.setHeightForWidth(self.apvariables.sizePolicy().hasHeightForWidth())
-        self.apvariables.setSizePolicy(sizePolicy7)
+        sizePolicy6 = QSizePolicy(QSizePolicy.Preferred, QSizePolicy.Minimum)
+        sizePolicy6.setHorizontalStretch(0)
+        sizePolicy6.setVerticalStretch(0)
+        sizePolicy6.setHeightForWidth(self.apvariables.sizePolicy().hasHeightForWidth())
+        self.apvariables.setSizePolicy(sizePolicy6)
         self.apvariables.setMinimumSize(QSize(350, 0))
         self.apvariables.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.apvariables.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
@@ -684,8 +672,8 @@ class Ui_MainWindow(object):
         self.verticalLayout_8.setObjectName(u"verticalLayout_8")
         self.mlvariables = QTableWidget(self.widget_2)
         self.mlvariables.setObjectName(u"mlvariables")
-        sizePolicy7.setHeightForWidth(self.mlvariables.sizePolicy().hasHeightForWidth())
-        self.mlvariables.setSizePolicy(sizePolicy7)
+        sizePolicy6.setHeightForWidth(self.mlvariables.sizePolicy().hasHeightForWidth())
+        self.mlvariables.setSizePolicy(sizePolicy6)
         self.mlvariables.setMinimumSize(QSize(350, 0))
         self.mlvariables.setHorizontalScrollBarPolicy(Qt.ScrollBarAsNeeded)
         self.mlvariables.setSizeAdjustPolicy(QAbstractScrollArea.AdjustToContents)
@@ -697,19 +685,19 @@ class Ui_MainWindow(object):
 
         self.analysismlwidget = ApMl(self.widget_2)
         self.analysismlwidget.setObjectName(u"analysismlwidget")
-        sizePolicy8 = QSizePolicy(QSizePolicy.MinimumExpanding, QSizePolicy.MinimumExpanding)
-        sizePolicy8.setHorizontalStretch(0)
-        sizePolicy8.setVerticalStretch(0)
-        sizePolicy8.setHeightForWidth(self.analysismlwidget.sizePolicy().hasHeightForWidth())
-        self.analysismlwidget.setSizePolicy(sizePolicy8)
+        sizePolicy7 = QSizePolicy(QSizePolicy.MinimumExpanding, QSizePolicy.MinimumExpanding)
+        sizePolicy7.setHorizontalStretch(0)
+        sizePolicy7.setVerticalStretch(0)
+        sizePolicy7.setHeightForWidth(self.analysismlwidget.sizePolicy().hasHeightForWidth())
+        self.analysismlwidget.setSizePolicy(sizePolicy7)
         self.analysismlwidget.setMinimumSize(QSize(200, 200))
 
         self.gridLayout.addWidget(self.analysismlwidget, 1, 0, 1, 1)
 
         self.analysisapwidget = ApMl(self.widget_2)
         self.analysisapwidget.setObjectName(u"analysisapwidget")
-        sizePolicy8.setHeightForWidth(self.analysisapwidget.sizePolicy().hasHeightForWidth())
-        self.analysisapwidget.setSizePolicy(sizePolicy8)
+        sizePolicy7.setHeightForWidth(self.analysisapwidget.sizePolicy().hasHeightForWidth())
+        self.analysisapwidget.setSizePolicy(sizePolicy7)
         self.analysisapwidget.setMinimumSize(QSize(200, 200))
 
         self.gridLayout.addWidget(self.analysisapwidget, 0, 0, 1, 1)
@@ -750,8 +738,6 @@ class Ui_MainWindow(object):
     def retranslateUi(self, MainWindow):
         MainWindow.setWindowTitle(QCoreApplication.translate("MainWindow", u"STEP", None))
         self.statuslight.setText("")
-        self.label.setText(QCoreApplication.translate("MainWindow", u"Status:", None))
-        self.statustext.setText(QCoreApplication.translate("MainWindow", u"--", None))
         self.recordlength.setSuffix(QCoreApplication.translate("MainWindow", u" s", None))
         self.startrecording.setText(QCoreApplication.translate("MainWindow", u"Record", None))
         self.analyserecording.setText(QCoreApplication.translate("MainWindow", u"Analyse recording ->", None))

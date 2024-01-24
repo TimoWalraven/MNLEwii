@@ -3,7 +3,7 @@ import time
 
 from PySide6.QtWidgets import QApplication, QMainWindow, QFileDialog, QTableWidgetItem
 from PySide6.QtCore import Qt, QTimer
-from PySide6.QtGui import QShortcut, QKeySequence
+from PySide6.QtGui import QShortcut
 from threading import Thread
 import serial
 from serial.tools import list_ports
@@ -62,7 +62,7 @@ class STEPviewer:
 
         # Live mode variables
         self.status = 'disconnected'
-        self.ui.statustext.setText(f"initializing...")
+        #self.ui.statustext.setText(f"initializing...")
 
         self.com_list = []
         self.com_port_selected = None
@@ -150,7 +150,7 @@ class STEPviewer:
 
         # Initialize timer for updating the plot and elapsed time
         self.start_time = datetime.datetime.now()
-        # TODO: set interval to correlate with target frequency
+        # TODO: set interval to automatically correlate with target frequency
         self.interval = 10  # Interval in milliseconds
         self.timer = QTimer()
         self.timer.timeout.connect(self.update)
@@ -174,7 +174,6 @@ class STEPviewer:
         ports = list_ports.comports()
         # exclude bluetooth serial ports
         ports = set([port for port in ports if 'Bluetooth' not in port[1]])
-        print(f"Found {len(ports)} com ports.")
         if len(ports) == 0:
             self.com_list = {'No com ports found'}
         else:
@@ -201,12 +200,11 @@ class STEPviewer:
                         with serial.Serial(self.com_port_selected, 9600, timeout=1) as ser:
                             print(f"Serial port {ser.name} successfully opened.")
                             self.status = 'connected'
-                            self.display = True
                             line = ''
                             while self.com_port_selected == self.ui.comport.currentText() and self.mode == 0:
                                 incoming = ser.readline().decode()
                                 if incoming and incoming != '':
-                                    self.display = True
+                                    self.status = 'display'
                                     line += incoming[1:-2]
                                     self.livex.append(float(line.split(', ')[0]))
                                     self.livey.append(float(line.split(', ')[1]))
@@ -215,7 +213,7 @@ class STEPviewer:
                                         self.livex.pop(0)
                                         self.livey.pop(0)
                                 else:
-                                    self.display = False
+                                    self.display = 'connected'
                                     time.sleep(0.01)
                                     continue
 
@@ -237,13 +235,19 @@ class STEPviewer:
             self.ui.liveapwidget.line.setData(np.linspace(0, 30, len(self.livey)), self.livey)
             self.ui.livemlwidget.line.setData(np.linspace(0, 30, len(self.livex)), self.livex)
             # Status light
-            if self.display and self.ui.statuslight.styleSheet() != "background-color: green; border-radius: 10px":
+            if self.status == 'display' and self.ui.statuslight.styleSheet() != ("background-color: green; "
+                                                                                 "border-radius: 10px"):
                 self.ui.statuslight.setStyleSheet("background-color: green; border-radius: 10px")
-            elif not self.display and self.ui.statuslight.styleSheet() != "background-color: red; border-radius: 10px":
+            elif self.status == 'disconnected' and self.ui.statuslight.styleSheet() != ("background-color: red; "
+                                                                                        "border-radius: 10px"):
                 self.ui.statuslight.setStyleSheet("background-color: red; border-radius: 10px")
+            elif self.status == 'connected' and self.ui.statuslight.styleSheet() != ("background-color: orange; "
+                                                                                     "border-radius: 10px"):
+                self.ui.statuslight.setStyleSheet("background-color: orange; border-radius: 10px")
+
             # status text
-            if self.status != self.ui.statustext.text():
-                self.ui.statustext.setText(self.status)
+            """if self.status != self.ui.statustext.text():
+                self.ui.statustext.setText(self.status)"""
             # record button color
             if self.recordstate and self.ui.startrecording.styleSheet() != "background-color: red":
                 self.ui.startrecording.setStyleSheet("background-color: red")
@@ -296,7 +300,6 @@ class STEPviewer:
                 return
 
             # TODO: check if user can write
-
             print(f"Converting data to json...")
             data_json = data.to_json(orient='records')
             metadata_json = dict(metadata.iloc[0])
@@ -367,6 +370,7 @@ class STEPviewer:
 
         succes = False
         try:
+            # TODO: add graph tab to excel file
             print(f"Saving file to {filename[0]}")
             with pd.ExcelWriter(f'{filename[0]}', engine='xlsxwriter', mode='w') as writer:
                 data_df.to_excel(writer, sheet_name='Data', index=False)
@@ -502,10 +506,10 @@ class STEPviewer:
         if self.recordstate:
             print("Already recording.")
             return
-        elif self.ui.statustext.text() == 'disconnected':
+        elif self.status == 'disconnected':
             print("No balance board connected.")
             return
-        elif self.ui.statustext.text() == 'connected':
+        elif self.status == 'connected':
             recordthread = Thread(target=record, args=(self.ui.recordlength.value(),))
             recordthread.daemon = True
             recordthread.start()
@@ -632,35 +636,42 @@ class STEPviewer:
         print("Entropy computed.")
 
         # AP/ML variables
-        variables = {
-            "mean_distance_": ["Mean distance", "mm"],
-            "rms_": ["RMS", "mm"],
-            "range_": ["Range", "mm"],
-            "mean_velocity_": ["Mean velocity", "mm/s"],
-            "entropy_": ["Entropy", "no unit"],
+        ap_variables = {
+            "mean_distance_": ["Mean distance", "mm", '3,4'],
+            "rms_": ["RMS", "mm", '4,5'],
+            "range_": ["Range", "mm", '22,2'],
+            "mean_velocity_": ["Mean velocity", "mm/s", '8.8'],
+            "entropy_": ["Entropy", "no unit", 'unknown'],
         }
         # AP variables
-        self.ui.apvariables.setRowCount(len(variables))
+        self.ui.apvariables.setRowCount(len(ap_variables))
         self.ui.apvariables.setColumnCount(4)
         self.ui.apvariables.setHorizontalHeaderLabels(['Feature', 'Value', 'Reference', 'Unit'])
-        for i, (key, value) in enumerate(variables.items()):
+        for i, (key, value) in enumerate(ap_variables.items()):
             self.ui.apvariables.setItem(i, 0, QTableWidgetItem(value[0]))
             self.ui.apvariables.setItem(i, 1, QTableWidgetItem(str(features[f'{key}AP'].round(2))))
-            self.ui.apvariables.setItem(i, 2, QTableWidgetItem('unknown'))
+            self.ui.apvariables.setItem(i, 2, QTableWidgetItem(value[2]))
             self.ui.apvariables.setItem(i, 3, QTableWidgetItem(value[1]))
 
+        ml_variables = {
+            "mean_distance_": ["Mean distance", "mm", '1,3'],
+            "rms_": ["RMS", "mm", '1,6'],
+            "range_": ["Range", "mm", '8,6'],
+            "mean_velocity_": ["Mean velocity", "mm/s", '5,9'],
+            "entropy_": ["Entropy", "no unit", 'unknown'],
+        }
         # ML variables
-        self.ui.mlvariables.setRowCount(len(variables))
+        self.ui.mlvariables.setRowCount(len(ml_variables))
         self.ui.mlvariables.setColumnCount(4)
         self.ui.mlvariables.setHorizontalHeaderLabels(['Feature', 'Value', 'Reference', 'Unit'])
-        for i, (key, value) in enumerate(variables.items()):
+        for i, (key, value) in enumerate(ml_variables.items()):
             self.ui.mlvariables.setItem(i, 0, QTableWidgetItem(value[0]))
             self.ui.mlvariables.setItem(i, 1, QTableWidgetItem(str(features[f'{key}ML'].round(2))))
-            self.ui.mlvariables.setItem(i, 2, QTableWidgetItem('unknown'))
+            self.ui.mlvariables.setItem(i, 2, QTableWidgetItem(value[2]))
             self.ui.mlvariables.setItem(i, 3, QTableWidgetItem(value[1]))
 
         # general variables
-        variables = {"mean_distance_Radius": ["Mean distance radius", "mm"],
+        variables = {"mean_distance_Radius": ["Mean distance radius", "mm", '11,8'],
                      }
 
         self.ui.generalvariables.setRowCount(len(variables))
@@ -669,7 +680,7 @@ class STEPviewer:
         for i, (key, value) in enumerate(variables.items()):
             self.ui.generalvariables.setItem(i, 0, QTableWidgetItem(value[0]))
             self.ui.generalvariables.setItem(i, 1, QTableWidgetItem(str(features[key].round(2))))
-            self.ui.generalvariables.setItem(i, 2, QTableWidgetItem('unknown'))
+            self.ui.generalvariables.setItem(i, 2, QTableWidgetItem(value[2]))
             self.ui.generalvariables.setItem(i, 3, QTableWidgetItem(value[1]))
 
 
