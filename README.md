@@ -8,7 +8,7 @@ Wii Balance board and a Raspberry Pi zero (2)W.
 STEP is a development effort of 4 Master Next Level Engineering students form the University of Applied Science Utrecht.
 
 ## Installing / Getting started
-1. To setup your own STEP dongle, follow this guide: https://github.com/TimoWalraven/STEP/wiki/How-to-setup-your-own-dongle. \
+1. To setup your own STEP dongle, follow this guide: https://github.com/TimoWalraven/STEP/wiki/How-to-setup-your-own-dongle. 
 2. If you already have a preconfigured STEP dongle + balance board, follow this guide: \
 (EN): https://github.com/TimoWalraven/STEP/wiki/(EN)-STEP-user-instructions \
 (NL): https://github.com/TimoWalraven/STEP/wiki/(NL)-STEP-gebruikershandleiding
@@ -27,13 +27,13 @@ do so by creating a pull request. We will review it and merge it if it is a good
 of things on the development roadmap:
 - [ ] Fix some minor bugs
 - [ ] Make serial connection more robust
-- [ ] Implement guidance on the use of COP variables in a clinical setting \
+- [ ] Implement guidance on the use of COP variables in a clinical setting 
 
 The projects future is guided by Dr. Jaap Jansen. If you have any questions, you can contact him at:
 `Jaap.Jansen@hu.nl`
 
 A conda environment running Python 3.9 was used during development. The environment can be recreated using the
-`environment.yml` file or the `requirements.txt` file.
+`environment.yml` file or the `requirements.txt` file. To run the STEP interface, run the `backend.py` file.
 
 ## Research
 
