@@ -280,6 +280,8 @@ class STEPviewer:
 
         def sendtoresearchdrive(data, metadata, mode='excel'):
 
+            assert mode in ('excel', 'json'), "Mode must be 'excel' or 'json'"
+
             print(f"Checking credentials...")
             if None in (self.config['url'], self.config['username'], self.config['password']):
                 print("No url, username or password found: please enter your credentials in the config file.")
@@ -316,9 +318,9 @@ class STEPviewer:
                 # Create a Pandas Excel writer using XlsxWriter as the engine.
                 writer = pd.ExcelWriter(filepath, engine="xlsxwriter")
                 # Convert the dataframe to an XlsxWriter Excel object.
-                data.to_excel(writer, sheet_name="Data")
-                metadata.to_excel(writer, sheet_name="Metadata")
-                variables_df.to_excel(writer, sheet_name="Variables")
+                data.to_excel(writer, sheet_name="Data", index=False)
+                metadata.to_excel(writer, sheet_name="Metadata", index=False)
+                variables_df.to_excel(writer, sheet_name="Variables", index=False)
                 # Close the Pandas Excel writer and output the Excel file.
                 writer.close()
 
@@ -338,6 +340,7 @@ class STEPviewer:
                 except Exception as e:
                     print(f"Error while saving temporary file: {e}")
                     return
+
             # upload file to research drive
             command = f'curl -T {filepath} -u "{username}:{password}" {url}{filename}'
             try:
@@ -387,6 +390,8 @@ class STEPviewer:
         metadata_df['notes'] = metadata_df['notes'].astype(str)
         metadata_df['practitioner'] = self.config['practitioner']
 
+        variables_df = pd.DataFrame(self.variables, index=[0])
+
         succes = False
         try:
             # TODO: add graph tab to excel file
@@ -394,6 +399,7 @@ class STEPviewer:
             with pd.ExcelWriter(f'{filename[0]}', engine='xlsxwriter', mode='w') as writer:
                 data_df.to_excel(writer, sheet_name='Data', index=False)
                 metadata_df.to_excel(writer, sheet_name='Metadata', index=False)
+                variables_df.to_excel(writer, sheet_name='Variables', index=False)
                 print("File successfully saved locally.")
                 succes = True
         except Exception as e:
